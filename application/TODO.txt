@@ -1,0 +1,28 @@
+TODO:
+-finish dashboard view,  enable tournament creation
+-tournament view
+	-editors
+		-Tournament Dashboard
+			-Stats at a glance
+			-User facts
+			-Target Date
+			-PermChange
+		-Tossups + ViewAll/EditOwn perms
+		-Bonuses
+	-managers
+		-Tournament Dashboard
+			-Stats at a glance
+			-User facts
+			-Target Date
+			-PermChange
+		-Tossups + ViewAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
+		-Bonuses + ViewAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
+	-admins/TD
+		-Tournament Dashboard
+			-Stats at a glance
+			-User facts
+			-Target Date
+			-PermVals
+		-Tossups + Edit/Approve/Promote [anything]
+		-Bonuses + Edit/Approve/Promote [anything]
+		-Generate Packets
