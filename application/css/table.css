@@ -26,7 +26,14 @@
  *     ../images/ - relative to this CSS file.
  */
 
-
+tbody, tr, td, th{
+	border: 1px solid #CCC;
+}
+ 
+table{
+	text-align: center;
+}
+ 
 /*
  * jQuery UI specific styling
  */

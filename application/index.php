@@ -7,18 +7,19 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<title><? echo $conf['name']; ?></title>
 		
-		<link rel="stylesheet" href="<? echo $conf['css1']; ?>" type="text/css" media="all" />
-		<link rel="stylesheet" href="<? echo $conf['css2']; ?>" type="text/css" media="all" />
-		<link rel="stylesheet" href="<? echo $conf['css3']; ?>" type="text/css" media="all" />
-		<link href="<? echo $conf['favicon']; ?>" rel="icon" type="image/x-icon" media="all" />
+		<link rel="icon" href="<? echo $conf['css_favicon']; ?>" type="image/x-icon" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_main']; ?>" type="text/css" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_table']; ?>" type="text/css" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_ui']; ?>" type="text/css" media="all" />
 		
-		<script type="text/javascript" src="<? echo $conf['jQ']; ?>"></script>
-		<script type="text/javascript" src="<? echo $conf['js1']; ?>"></script>
-		<script type="text/javascript" src="<? echo $conf['js2']; ?>"></script>
-		<script type="text/javascript" src="<? echo $conf['js3']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_jQuery']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_scripts']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_tables']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_ui']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_time']; ?>"></script>
 	</head>
 
-	<body>
+	<body onLoad="init_all()">
 		<div id="shell">	
 			
 			<div id="header">

@@ -53,6 +53,7 @@ switch($context){
 				<ul>
 					<li><a class="active"><span>Dashboard</span></a></li>
 					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
+					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;		
@@ -61,6 +62,16 @@ switch($context){
 				<ul>
 					<li><a onclick="go_dashboard(); return false;"><span>Dashboard</span></a></li>
 					<li><a class="active"><span>Create</span></a></li>
+					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
+					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
+				</ul>
+				<? break;
+			case 'Join':
+				?>
+				<ul>
+					<li><a onclick="go_dashboard(); return false;"><span>Dashboard</span></a></li>
+					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
+					<li><a class="active"><span>Join</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;
@@ -69,6 +80,7 @@ switch($context){
 				<ul>
 					<li><a class="active"><span>Dashboard</span></a></li>
 					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
+					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;

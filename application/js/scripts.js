@@ -14,7 +14,8 @@ function go_login(){message('login.php','content',0,0,0,[po(['submit'],['0'])]);
 function go_welcome(){message('welcome.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Welcome'])]);}
 
 function go_dashboard(){message('dashboard.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Dashboard'])]);}
-function go_create(){message('create.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);}
+function go_create(){message('create.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);}
+function go_join(){message('join.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);}
 function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]);}
 
 //Continuations
@@ -27,21 +28,18 @@ function cont_remove(name,fade){if(fade==1){$("#" + name).fadeOut();}else{$("#" 
 
 function submit_register(obj){message('register.php','registerform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_login(obj){message('login.php','loginform',0,0,1,[po(['submit'],['1']),obj]);}
+function submit_create(obj){message('create.php','createform',0,0,1,[po(['submit'],['1']),obj]);}
 
 //Initializers
 
 function init_menu(){message('menu.php','navigation',0,0,0,[]);}
 function init_content(){message('content.php','content',0,0,0,[]);}
 function init_greeting(){message('greeting.php','greeting',0,0,0,[]);}
+function init_all(){init_menu(); init_content(); init_greeting();}
 
 //Fancifiers
 
-function fancy_table(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tournaments found! You might want to <a onclick=\"go_create(); return false;\"><span>create</span></a> or <a>join</a> one."}});}
-
-/*! Executions !*/
-
-init_menu();
-init_content();
-init_greeting();
+function fancy_sets(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tournaments found! You might want to <a onclick=\"go_create(); return false;\"><span>create</span></a> or <a>join</a> one."}});}
+function fancy_date(id){$('#'+id).datetimepicker({dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss'})};
 
 /*! End JavaScript Code !*/
