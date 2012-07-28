@@ -14,7 +14,6 @@ CREATE TABLE psets(
 	title VARCHAR(200) NOT NULL,
 	info TEXT,
 	director_users_id INT NOT NULL,
-	is_users_tournament TINYINT(1) NOT NULL, /* Initialize with context. */
 	admin_access_code INT NOT NULL,
 	manager_access_code INT NOT NULL,
 	editor_access_code INT NOT NULL,
@@ -25,9 +24,7 @@ CREATE TABLE psets(
 CREATE TABLE psets_allocations(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	psets_id INT NOT NULL,
-	subject VARCHAR(100) NOT NULL,
-	tossups_pp INT NOT NULL,
-	bonuses_pp INT NOT NULL
+	subject VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE permissions (

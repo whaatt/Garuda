@@ -12,11 +12,23 @@ body {
 
 .box{
 	border: 1px solid;
+	padding: 5px;
 	display: inline-block;
 }
 
 .postform{
 	margin: 5px;
+}
+
+.halfleft{
+	width: 50%;
+	float: left;
+}
+
+.halfright{
+	width: 50%;
+	float: right;
+	text-align: center;
 }
 
 textarea {

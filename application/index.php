@@ -36,7 +36,7 @@
 		</div>
 
 		<div id="footer">
-			<p><? echo $conf['footer']; ?> Design by <a href="http://chocotemplates.com">ChocoTemplates.com</a>.</p>
+			<p><? echo $conf['footer']; ?> Layout by <a href="http://www.chocotemplates.com">ChocoTemplates.com</a>.</p>
 		</div>
 		
 		<div id="waste"></div>
