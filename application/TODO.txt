@@ -1,6 +1,8 @@
+-Write Skalon.com entry about literature
+
 TODO:
--dashboard view
-	-finish join
+
+-link tournaments to views
 -tournament view
 	-editors
 		-Tournament Dashboard
@@ -26,4 +28,4 @@ TODO:
 			-PermVals
 		-Tossups + View/Edit/Comment/Approve/Promote [anything]
 		-Bonuses + View/Edit/Comment/Approve/Promote [anything]
-		-Generate Packets (?? - for everyone)
+	-Generate Packets (?? - for everyone)

@@ -46,6 +46,7 @@ switch($context){
 				<? break;
 		}
 		break;
+		
 	case 'dash': //Dashboard Pages
 		switch($link){
 			case 'Dashboard':
@@ -84,6 +85,77 @@ switch($context){
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;
+		}
+		break;
+		
+	case 'pset': //Tournament Pages
+		switch($link){
+			case 'Tournament':
+				?>
+				<ul>
+					<li><a class="active"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
+			case 'Members':
+				?>
+				<ul>
+					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
+					<li><a class="active"><span>Members</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
+			case 'Tossups':
+				?>
+				<ul>
+					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a class="active"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
+			case 'Bonuses':
+				?>
+				<ul>
+					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a class="active"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
+			case 'Packets':
+				?>
+				<ul>
+					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a class="active"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
+			default:
+				?>
+				<ul>
+					<li><a class="active"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;	
 		}
 		break;
 }

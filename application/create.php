@@ -6,21 +6,33 @@ require_once('query.php');
 /* Create Handler */
 
 if(isset($_SESSION['username'])){
-	$submit = $_POST['submit']; //Form Submit Boolean
+	$submit = $_POST['submit']; //Form Submit Boolean (1 or 0)
 
-	if ($submit == '1'){ //Registration Form Submission
+	if ($submit == '1'){ //Create Form Submission
 
+		//Get POST stuff
 		$name = $_POST['cre_name'];
 		$date = $_POST['cre_date'];
 		$info = $_POST['cre_info'];
 		
 		$subjects = $_POST['cre_sele'];
-		$subjects = explode("\n", $subjects);
 		
-		foreach ($subjects as $key => $value){
-			if (strlen($subjects[$key]) > 50){
-				$subjects[$key] = substr($subjects[$key], 0, 50); 
+		if(strlen(trim($subjects)) > 0){//Check if stuff is actually in the subjects field
+			$subjects = explode("\n", $subjects);
+			
+			foreach ($subjects as $key => $value){
+				if ($key > 9){//Max of 10 subjects
+					break;
+				}
+				
+				if (strlen($subjects[$key]) > 50){
+					$subjects[$key] = substr($subjects[$key], 0, 50); 
+				}
 			}
+		}
+		
+		else{
+			$subjects = array();
 		}
 		
 		if (strlen($date) > 0){
@@ -31,7 +43,7 @@ if(isset($_SESSION['username'])){
 			$date = '0000-00-00 00:00:00';
 		}
 			
-		if (strlen($name) <= 0 or strlen($name) > 200 or strlen($info) > 1000 or (isset($pDate['errors']) and $pDate['error_count'] + $pDate['warning_count'] > 0)){//Entry Validation
+		if (strlen($name) <= 0 or strlen($name) > 200 or strlen($info) > 1000 or (isset($pDate['errors']) and $pDate['error_count'] + $pDate['warning_count'] > 0)){//Entry Validation ($pDate checks $date)
 			?>
 			<div class="message error-message" onclick="go_create();">
 				<p><strong>One or more of your fields was improperly entered. (Click to try again.)</strong></p>
@@ -93,7 +105,7 @@ if(isset($_SESSION['username'])){
 				<label><span class="halfleft">Tournament Information:&nbsp;&nbsp;</span><span class="halfright">Subject Selection:</span><br>
 				<textarea type="text" id="cre_info" name="cre_info"></textarea>&nbsp;&nbsp;
 				<textarea type="text" id="cre_sele" name="cre_sele"></textarea></label><br><br>
-				<input type="submit" value="Register">
+				<input type="submit" value="Create">
 			</form>
 		</div></div></p>			
 		<script type="text/javascript">
