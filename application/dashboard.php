@@ -19,14 +19,14 @@ if(isset($_SESSION['username'])){
 	$columns = array('psets_id', 'role');
 	$permsSelect = selectFrom('permissions', $columns, array('users_id'), array("'" . sanitize($userID) . "'"));
 
-	foreach ($permsSelect as $perm){ //Iterate through tournaments with some permission stored for user
+	foreach ($permsSelect as $perm){ //Iterate through tournaments with some permission stored for user, building up $tournaments
 		$columns = array('title', 'director_users_id', 'created', 'target');
 		$setsSelect = selectFrom('psets', $columns, array('id'), array("'" . sanitize($perm['psets_id']) . "'"));//Get tournaments.
 		
-		array_push($tournaments, array(0 => $setsSelect[0]['title'], 1 => '', 2 => '', 3 => $setsSelect[0]['created'], 4 => ''));
+		array_push($tournaments, array(0 => $setsSelect[0]['title'], 1 => '', 2 => '', 3 => $setsSelect[0]['created'], 4 => '', 5 => $perm['psets_id']));
 		
 		$userSelect = selectFrom('users', array('username', 'name'), array('id'), array("'" . $setsSelect[0]['director_users_id'] . "'"));
-		$director = $userSelect[0]['name'] . ' (' . $userSelect[0]['username'] . ')';//Get director
+		$director = $userSelect[0]['name'] . ' (' . $userSelect[0]['username'] . ')';//Get director in format: name (username)
 		
 		$tournaments[count($tournaments)-1][1] = $director;//Set Director
 		
@@ -60,6 +60,7 @@ if(isset($_SESSION['username'])){
 		<tbody>
 	<? //End Boilerplate
 	
+		//Print tournaments, color coding by date
 		usort($tournaments, 'sortTournaments');
 		foreach ($tournaments as $tournament){
 			if ($tournament[4] == 'None Set'){
@@ -74,8 +75,14 @@ if(isset($_SESSION['username'])){
 				echo '<tr class="greenRow">';
 			}
 			
-			foreach ($tournament as $parameter){
-				echo '<td>' . $parameter . '</td>';
+			foreach ($tournament as $key => $parameter){
+				if ($key == 0){
+					echo '<td><a onclick="cont_tournament(' . $tournament[5] . '); return false;">' . $parameter . '</a></td>';
+				}
+				
+				else if ($key != 5){
+					echo '<td>' . $parameter . '</td>';
+				}
 			}
 			
 			echo '</tr>';
@@ -85,7 +92,7 @@ if(isset($_SESSION['username'])){
 		</tbody>
 	</table><p></p>
 	<script type="text/javascript">
-		fancy_sets('sets');
+		fancy_sets('sets');//Make the table pretty and searchable
 	</script>
 	<? //End Boilerplate
 }

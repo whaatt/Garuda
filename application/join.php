@@ -10,9 +10,9 @@ if(isset($_SESSION['username'])){
 
 	if ($submit == '1'){ //Join Form Submission
 		
-		//Get POST values
-		$name = $_POST['join_name'];
-		$code = $_POST['join_code'];
+		//Get POST values and trim whitespace
+		$name = trim($_POST['join_name']);
+		$code = trim($_POST['join_code']);
 		
 		if (strlen($name) == 0 or strlen($code) != 6){//Entry Validation ($name can't be empty, $code must be 6 digits)
 			?>

@@ -1,5 +1,3 @@
--Write Skalon.com entry about literature
-
 TODO:
 
 -link tournaments to views

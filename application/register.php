@@ -9,10 +9,10 @@ $submit = $_POST['submit']; //Form Submit Boolean
 
 if ($submit == '1'){ //Registration Form Submission
 
-	$name = $_POST['reg_name'];
-	$user = $_POST['reg_username'];
-	$pass = $_POST['reg_password'];
-	$check = $_POST['reg_password2'];
+	$name = trim($_POST['reg_name']);
+	$user = trim($_POST['reg_username']);
+	$pass = trim($_POST['reg_password']);
+	$check = trim($_POST['reg_password2']);
 	
 	if (strlen($name) <= 0 or strlen($user) < 5 or strlen($pass) < 5 or strlen($name) > 40 or strlen($user) > 20 or strlen($pass) > 20 or $pass != $check){//Entry Validation
 		?>

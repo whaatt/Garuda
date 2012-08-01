@@ -10,12 +10,12 @@ if(isset($_SESSION['username'])){
 
 	if ($submit == '1'){ //Create Form Submission
 
-		//Get POST stuff
-		$name = $_POST['cre_name'];
-		$date = $_POST['cre_date'];
-		$info = $_POST['cre_info'];
+		//Get POST stuff and trim whitespace
+		$name = trim($_POST['cre_name']);
+		$date = trim($_POST['cre_date']);
+		$info = trim($_POST['cre_info']);
 		
-		$subjects = $_POST['cre_sele'];
+		$subjects = trim($_POST['cre_sele']);
 		
 		if(strlen(trim($subjects)) > 0){//Check if stuff is actually in the subjects field
 			$subjects = explode("\n", $subjects);
@@ -66,6 +66,7 @@ if(isset($_SESSION['username'])){
 				$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 				$userID = $userSelect[0]['id'];//Get ID of submitting user
 				
+				//Random Passwords
 				$adminPass = strval(mt_rand(100000,999999));
 				$managerPass = strval(mt_rand(100000,999999));
 				$editorPass = strval(mt_rand(100000,999999));

@@ -16,13 +16,23 @@ function go_welcome(){message('welcome.php','content',0,0,0,[]); message('menu.p
 function go_dashboard(){message('dashboard.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Dashboard'])]);}
 function go_create(){message('create.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);}
 function go_join(){message('join.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);}
+function go_account(){message('account.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);}
 function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]);}
+
+function go_tournament(){message('tournament.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);}
+function go_members(){message('members.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);}
+function go_tossups(){message('tossups.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);}
+function go_bonuses(){message('bonuses.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);}
+function go_packets(){message('packets.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);}
+function go_leave(){message('leave.php','content',0,1,1,[po(['really'],['0'])]);}
 
 //Continuations
 
 function cont_dashboard(){go_dashboard(); message('greeting.php','greeting',0,0,0,[]);}
 function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])]); message('greeting.php','greeting',0,0,0,[]); go_welcome();}
 function cont_remove(name,fade){if(fade==1){$("#" + name).fadeOut();}else{$("#" + name).hide();}}
+function cont_tournament(id){message('tournament.php','content',0,0,0,[po(['tou_id'],[id])]); message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);}
+function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])]); go_dashboard();}
 
 //Submissions
 
@@ -30,6 +40,7 @@ function submit_register(obj){message('register.php','registerform',0,0,1,[po(['
 function submit_login(obj){message('login.php','loginform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_create(obj){message('create.php','createform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_join(obj){message('join.php','joinform',0,0,1,[po(['submit'],['1']),obj]);}
+function submit_account(obj){message('account.php','accountform',0,0,1,[po(['submit'],['1']),obj]);}
 
 //Initializers
 

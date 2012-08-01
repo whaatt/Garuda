@@ -47,6 +47,9 @@ switch($context){
 		}
 		break;
 		
+	//I kept the tournament pages with the dashboard pages, because on a refresh, the user should return to the dashboard.
+	//Consider changing this later, but it seems to be the most seamless and unobtrusive solution for now.
+		
 	case 'dash': //Dashboard Pages
 		switch($link){
 			case 'Dashboard':
@@ -55,6 +58,7 @@ switch($context){
 					<li><a class="active"><span>Dashboard</span></a></li>
 					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
 					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
+					<li><a onclick="go_account(); return false;"><span>Account</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;		
@@ -64,6 +68,7 @@ switch($context){
 					<li><a onclick="go_dashboard(); return false;"><span>Dashboard</span></a></li>
 					<li><a class="active"><span>Create</span></a></li>
 					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
+					<li><a onclick="go_account(); return false;"><span>Account</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;
@@ -73,23 +78,20 @@ switch($context){
 					<li><a onclick="go_dashboard(); return false;"><span>Dashboard</span></a></li>
 					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
 					<li><a class="active"><span>Join</span></a></li>
+					<li><a onclick="go_account(); return false;"><span>Account</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;
-			default:
+			case 'Account':
 				?>
 				<ul>
-					<li><a class="active"><span>Dashboard</span></a></li>
+					<li><a onclick="go_dashboard(); return false;"><span>Dashboard</span></a></li>
 					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
 					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
+					<li><a class="active"><span>Account</span></a></li>
 					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
 				<? break;
-		}
-		break;
-		
-	case 'pset': //Tournament Pages
-		switch($link){
 			case 'Tournament':
 				?>
 				<ul>
@@ -148,14 +150,13 @@ switch($context){
 			default:
 				?>
 				<ul>
-					<li><a class="active"><span>Tournament</span></a></li>
-					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
-					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
-					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
-					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
-					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+					<li><a class="active"><span>Dashboard</span></a></li>
+					<li><a onclick="go_create(); return false;"><span>Create</span></a></li>
+					<li><a onclick="go_join(); return false;"><span>Join</span></a></li>
+					<li><a onclick="go_account(); return false;"><span>Account</span></a></li>
+					<li><a onclick="go_logout(); return false;"><span>Logout</span></a></li>
 				</ul>
-				<? break;	
+				<? break;
 		}
 		break;
 }
