@@ -77,7 +77,7 @@ if(isset($_SESSION['username'])){
 }
 
 else{
-	echo "<p>This page is only for authenticated users. Please refresh the page to restart your session. Sorry for any inconvenience!</p>";
+	echo $conf['unauthorized'];
 }
 
 ?>

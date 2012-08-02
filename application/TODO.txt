@@ -1,29 +1,16 @@
 TODO:
-
--link tournaments to views
 -tournament view
+	-Edit tournament information
 	-editors
-		-Tournament Dashboard
-			-Stats at a glance
-			-User facts
-			-Target Date
-			-PermChange
+		-Users
 		-Tossups + ViewAll/CommentAll/EditOwn perms
 		-Bonuses + ViewAll/CommentAll/EditOwn perms
 	-managers
-		-Tournament Dashboard
-			-Stats at a glance
-			-User facts
-			-Target Date
-			-PermChange
+		-Users
 		-Tossups + ViewAll/CommentAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
 		-Bonuses + ViewAll/CommentAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
 	-admins/TD
-		-Tournament Dashboard
-			-Stats at a glance
-			-User facts
-			-Target Date
-			-PermVals
+		-Users
 		-Tossups + View/Edit/Comment/Approve/Promote [anything]
 		-Bonuses + View/Edit/Comment/Approve/Promote [anything]
 	-Generate Packets (?? - for everyone)

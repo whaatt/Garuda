@@ -51,6 +51,8 @@ textarea {
 .left { float:left; display:inline; }
 .right { float:right; display:inline; }
 
+.property { margin: 3px; text-align: left; }
+
 a { color:#d96a02; text-decoration: none; cursor:pointer; }
 a:hover { color:#81693c; }
 
