@@ -14,12 +14,14 @@ $conf['zen'] = "http://totemdog.com/zen/"; //1337 Site
 
 $conf['css_main'] = "css/style.css"; //Master Stylesheet Location
 $conf['css_table'] = "css/table.css"; //Table Stylesheet Location
+$conf['css_modal'] = "css/facebox.css"; //Modal Stylesheet Location
 $conf['css_ui'] = "css/ui.css"; //UI Stylesheet Location
 $conf['css_favicon'] = "css/favicon.ico"; //Favicon Location
 
 $conf['js_jQuery'] = "js/jQuery.js"; //jQuery Location
 $conf['js_scripts'] = "js/scripts.js"; //Master Scripts Location
 $conf['js_tables'] = "js/tables.js"; //Table Script Location
+$conf['js_modal'] = "js/facebox.js"; //Modal Script Location
 $conf['js_time'] = "js/time.js"; //Time Script Location
 $conf['js_ui'] = "js/ui.js"; //UI Script Location
 
@@ -51,5 +53,10 @@ $conf['dashboard'] = "<p>The table below lists tournaments you have permission t
 $conf['footer'] = "Hastily coded by <a href='" . $conf['site'] . "'>Sanjay Kannan</a>."; //Copyright
 $conf['tournament'] = "<p>The information shown below describes the properties of this set or tournament. For security purposes, you currently cannot edit any of the following parameters; however, if you have a valid reason as to why you would want to do so, please use the contact form and your case will be certainly considered. Tournament member information (editable by administrators), tossups, and bonuses can all be found on their respective pages in the menu.</p>";
 $conf['unauthorized'] = "<p>This page is only for authenticated users. Please refresh the page to restart your session. Sorry for any inconvenience!</p>";
+$conf['unauthorized2'] = "<p>This function is only for authenticated users. Please refresh the page to restart your session. Sorry for any inconvenience!</p>";
+$conf['noperms'] = "<p>You do not have sufficient tournament permissions to access this function. Sorry about the inconvenience!</p>";
+$conf['noperms2'] = "<p>You do not have permissions to access this tournament. Please contact your director. Thanks!</p>";
+$conf['codes'] = "<p>As tournament director, you may view the security codes for this set. Please provide these to your personnel when they attempt to gain set access. Once users have joined the tournament membership, only you and administrators may modify user permissions, using the Members page in the main menu above.";
+$conf['members'] = "<p>The following table lists users with membership in this tournament or set. This should serve as a directory for most users to view their fellow personnel, and administrators may use the pertinent function to update and modify a user's status. Please contact your tournament director for more information.</p>"
 
 ?>

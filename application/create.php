@@ -21,12 +21,14 @@ if(isset($_SESSION['username'])){
 			$subjects = explode("\n", $subjects);
 			
 			foreach ($subjects as $key => $value){
+				$subjects[$key] = trim($subjects[$key]);
+				
 				if ($key > 9){//Max of 10 subjects
 					break;
 				}
 				
 				if (strlen($subjects[$key]) > 50){
-					$subjects[$key] = substr($subjects[$key], 0, 50); 
+					$subjects[$key] = substr($subjects[$key], 0, 50);
 				}
 			}
 		}

@@ -1,16 +1,5 @@
 TODO:
 -tournament view
-	-Edit tournament information
-	-editors
-		-Users
-		-Tossups + ViewAll/CommentAll/EditOwn perms
-		-Bonuses + ViewAll/CommentAll/EditOwn perms
-	-managers
-		-Users
-		-Tossups + ViewAll/CommentAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
-		-Bonuses + ViewAll/CommentAll/EditOwn perms + Approve/EditAll/Msg perms [psets_allocation]
-	-admins/TD
-		-Users
-		-Tossups + View/Edit/Comment/Approve/Promote [anything]
-		-Bonuses + View/Edit/Comment/Approve/Promote [anything]
-	-Generate Packets (?? - for everyone)
+	-Tossups
+	-Bonuses
+	-Generate Packets

@@ -7,11 +7,11 @@ function sanitize($value){//Defend Against Injections
 }
 
 function getNumOf($table,$columns,$items){//Get Number Of Instances In Database
-	$query = "SELECT * FROM $table WHERE ";
-	$query = $query . $columns[0] . "=" . $items[0];
+	$query = "SELECT * FROM `$table` WHERE ";
+	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
 	
 	for($i = 1; $i < count($columns); $i++){
-		$query = $query . " AND " . $columns[$i] . "=" . $items[$i];
+		$query = $query . " AND " . "`" . $columns[$i] . "`" . "=" . $items[$i];
 	}
 
 	$duplicates = mysql_query($query) or die(mysql_error());
@@ -19,11 +19,11 @@ function getNumOf($table,$columns,$items){//Get Number Of Instances In Database
 }
 
 function insertInto($table,$columns,$items){//Insert Items Into Database
-	$query = "INSERT INTO $table (";//Build Query String
-	$query = $query . $columns[0];
+	$query = "INSERT INTO `$table` (";//Build Query String
+	$query = $query . "`" . $columns[0] . "`";
 
 	for($i = 1; $i < count($columns); $i++){
-		$query = $query . ", " . $columns[$i];
+		$query = $query . ", " . "`" . $columns[$i] . "`";
 	}
 	
 	$query = $query . ") VALUES (";
@@ -42,13 +42,13 @@ function insertInto($table,$columns,$items){//Insert Items Into Database
 //Precondition: $values are valid and $columns correspond one-to-one with $items
 //Precondition: $columns and $items are non-empty
 function selectFrom($table,$values,$columns,$items){//Make A Database Selection
-	$query = "SELECT * FROM $table";
+	$query = "SELECT * FROM `$table`";
 	
 	if (count($columns) > 0){
-		$query = $query . " WHERE " . $columns[0] . "=" . $items[0];
+		$query = $query . " WHERE " . "`" . $columns[0] . "`" . "=" . $items[0];
 		
 		for($i = 1; $i < count($columns); $i++){
-			$query = $query . " AND " . $columns[$i] . "=" . $items[$i];
+			$query = $query . " AND " . "`" . $columns[$i] . "`" . "=" . $items[$i];
 		}
 	}
 	
@@ -70,20 +70,32 @@ function selectFrom($table,$values,$columns,$items){//Make A Database Selection
 //Precondition: $values are valid and $columns correspond one-to-one with $items
 //Precondition: $conditions and $values are non-empty
 function updateIn($table,$columns,$items,$conditions,$values){//Update Rows In Database
-	$query = "UPDATE $table SET ";//Build Query String
-	$query = $query . $columns[0] . "=" . $items[0];
+	$query = "UPDATE `$table` SET ";//Build Query String
+	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
 
 	for($i = 1; $i < count($columns); $i++){
-		$query = $query . ", " . $columns[$i] . "=" . $items[$i];
+		$query = $query . ", " . "`" . $columns[$i] . "`" . "=" . $items[$i];
 	}
 	
 	$query = $query . " WHERE ";
-	$query = $query . $conditions[0] . "=" . $values[0];
+	$query = $query . "`" . $conditions[0] . "`" . "=" . $values[0];
 	
 	for($i = 1; $i < count($conditions); $i++){
-		$query = $query . " AND " . $conditions[$i] . "=" . $values[$i];
+		$query = $query . " AND " . "`" . $conditions[$i] . "`" . "=" . $values[$i];
 	}
 	
+	mysql_query($query) or die(mysql_error());
+	return true;
+}
+
+function deleteFrom($table,$columns,$items){//Delete certain items from database
+	$query = "DELETE FROM `$table` WHERE ";
+	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
+	
+	for($i = 1; $i < count($columns); $i++){
+		$query = $query . " AND " . "`" . $columns[$i] . "`" . "=" . $items[$i];
+	}
+
 	mysql_query($query) or die(mysql_error());
 	return true;
 }

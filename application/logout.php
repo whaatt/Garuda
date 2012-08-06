@@ -16,7 +16,7 @@ if(isset($_SESSION['username'])){
 	else{
 		?>
 		<div id="logout" class="message error-message">
-		<p><strong>Are you sure you want to logout? <a onclick="cont_logout()">Yes</a> or <a onclick="cont_remove('logout', 1);">No</a>.</strong></p>
+			<p><strong>Are you sure you want to logout? <a onclick="cont_logout()">Yes</a> or <a onclick="cont_remove($(this).closest('#logout'), 1);">No</a>.</strong></p>
 		</div>
 		<?
 	}
