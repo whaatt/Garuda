@@ -57,6 +57,7 @@ function init_all(){init_menu(); init_content(); init_greeting();}
 //Fancifiers
 
 function fancy_sets(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tournaments found! You might want to <a onclick=\"go_create(); return false;\"><span>create</span></a> or <a onclick=\"go_join(); return false;\">join</a> one."}});}
+function fancy_members(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No members found! That sounds a little sketchy."}});}
 function fancy_date(id){$('#'+id).datetimepicker({dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss'});}
 
 //Modals
