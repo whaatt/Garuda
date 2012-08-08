@@ -23,7 +23,7 @@ if(isset($_SESSION['username'])){
 			foreach ($subjects as $key => $value){
 				$subjects[$key] = trim($subjects[$key]);
 				
-				if ($key > 9){//Max of 10 subjects
+				if ($key > 49){//Max of 50 subjects
 					break;
 				}
 				

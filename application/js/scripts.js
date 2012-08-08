@@ -33,7 +33,7 @@ function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])]); me
 function cont_remove(obj,fade){if(fade==1){$(obj).fadeOut();}else{$(obj).hide();}}
 function cont_tournament(id){message('tournament.php','content',0,0,0,[po(['tou_id','submit'],[id,'0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);}
 function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])]); go_dashboard();}
-function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],[type, id])]); if (type=='set'){cont_leave();} else if (type=='member'){go_members();}}
+function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],[type, id])]); if (type=='set'){cont_leave();} else if (type=='member'){go_members();} else if (type=='tossup'){go_tossups();}}
 
 //Submissions
 
@@ -44,8 +44,14 @@ function submit_join(obj){message('join.php','joinform',0,0,1,[po(['submit'],['1
 function submit_account(obj){message('account.php','accountform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_update(obj){message('tournament.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
 function submit_member(obj){message('members.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
+function submit_create_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
+function submit_edit_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['3']),obj]); $(document).trigger('close.facebox');}
+function submit_mark_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['4']),obj]); $(document).trigger('close.facebox');}
+function submit_send_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['5']),obj]); $(document).trigger('close.facebox');}
 function submit_delete_set(){message('tournament.php','content',0,1,1,[po(['submit'],['2'])]); $(document).trigger('close.facebox');}
 function submit_delete_member(id){message('members.php','content',0,1,1,[po(['submit','id'],['2',id])]); $(document).trigger('close.facebox');}
+function submit_delete_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['2',id])]); $(document).trigger('close.facebox');}
+function submit_delete_message(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['6',id])]); $(document).trigger('close.facebox');}
 
 //Initializers
 
@@ -58,11 +64,17 @@ function init_all(){init_menu(); init_content(); init_greeting();}
 
 function fancy_sets(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tournaments found! You might want to <a onclick=\"go_create(); return false;\"><span>create</span></a> or <a onclick=\"go_join(); return false;\">join</a> one."}});}
 function fancy_members(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No members found! That sounds a little sketchy."}});}
+function fancy_tossups(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tossups found! You may want to create a new tossup."}});}
 function fancy_date(id){$('#'+id).datetimepicker({dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss'});}
 
 //Modals
 
 function modal_set(){message('modal.php','modal',0,0,0,[po(['type'],['set'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); fancy_date('upd_date');});}
 function modal_member(id){message('modal.php','modal',0,0,0,[po(['type','id'],['member',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
+function modal_create_tossup(){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type'],['create_tossup'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#crt_body').redactor(body); $('#crt_ans').redactor(ans);});}
+function modal_edit_tossup(id){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['edit_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#edt_body').redactor(body); $('#edt_ans').redactor(ans);});}
+function modal_mark_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['mark_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
+function modal_send_tossup(id){var msg = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['send_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#sdt_msg').redactor(msg);});}
+function modal_messages_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['messages_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#messages').accordion({collapsible: true, active: false});});}
 
 /*! End JavaScript Code !*/

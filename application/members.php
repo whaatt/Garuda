@@ -38,6 +38,10 @@ if(isset($_SESSION['username'])){
 				<?
 			}
 		}
+		
+		else{
+			echo $conf['noperms'];
+		}
 	}
 	
 	else if ($submit == '1'){ //Update Form Submission
@@ -60,7 +64,7 @@ if(isset($_SESSION['username'])){
 				$entrySelect = selectFrom('psets_allocations', array('id'), $locations, $items);//Get ID of allocation
 				$entry = $entrySelect[0]['id'];
 				
-				$subjectSelect = selectFrom('psets_allocations', array('id'), array('subject'), array("'" . sanitize($focus) . "'"));//Get subject
+				$subjectSelect = selectFrom('psets_allocations', array('id'), array('subject', 'psets_id'), array("'" . sanitize($focus) . "'", "'" . $_SESSION['tournament'] . "'"));//Get subject
 				$focus = $subjectSelect[0]['id'];
 				
 				$columns = array('role', 'psets_allocations_id');
@@ -162,7 +166,7 @@ if(isset($_SESSION['username'])){
 			</tbody>
 		</table><p></p>
 		<script type="text/javascript">
-			fancy_sets('members');//Make the table pretty and searchable
+			fancy_members('members');//Make the table pretty and searchable
 		</script>
 		<? //End Boilerplate
 	}

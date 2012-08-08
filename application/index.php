@@ -9,12 +9,14 @@
 		
 		<link rel="icon" href="<? echo $conf['css_favicon']; ?>" type="image/x-icon" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_main']; ?>" type="text/css" media="all" />
-		<link rel="stylesheet" href="<? echo $conf['css_table']; ?>" type="text/css" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_tables']; ?>" type="text/css" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_editor']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_modal']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_ui']; ?>" type="text/css" media="all" />
 		
 		<script type="text/javascript" src="<? echo $conf['js_jQuery']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_scripts']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_editor']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_tables']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_modal']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_ui']; ?>"></script>

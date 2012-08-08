@@ -1,5 +1,7 @@
 TODO:
--tournament view
-	-Tossups
-	-Bonuses
-	-Generate Packets
+	-Duplicate everything for bonuses
+	-Handle subject deletions
+		-Make subjects unique
+	-Packets
+	-Test User Permissions
+	-Comment Code

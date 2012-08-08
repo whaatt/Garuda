@@ -2,8 +2,14 @@
 
 /* MySQL Query Handler */
 
-function sanitize($value){//Defend Against Injections
-	return mysql_real_escape_string(htmlentities($value));
+function sanitize($value, $noEntity = true, $noStrip = ''){//Defend Against Injections
+	if ($noEntity){
+		return mysql_real_escape_string(htmlentities($value));
+	}
+	
+	else{
+		return mysql_real_escape_string(strip_tags($value, $noStrip));
+	}
 }
 
 function getNumOf($table,$columns,$items){//Get Number Of Instances In Database

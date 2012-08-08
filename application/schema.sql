@@ -38,9 +38,9 @@ CREATE TABLE permissions (
 CREATE TABLE tossups(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	psets_id INT NOT NULL,
-	editor_users_id INT NOT NULL,
-	master_tossup_id INT,
-	psets_allocations_id INT NOT NULL, /* Subject */
+	creator_users_id INT NOT NULL,
+	editor_users_id INT,
+	psets_allocations_id INT, /* Subject */
 	tossup TEXT NOT NULL,
 	answer TEXT NOT NULL,
 	duplicate_tossups_id INT,
@@ -53,9 +53,9 @@ CREATE TABLE tossups(
 CREATE TABLE bonuses(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	psets_id INT NOT NULL,
-	editor_users_id INT NOT NULL,
-	master_bonus_id INT,
-	psets_allocations_id INT NOT NULL, /* Subject */
+	creator_users_id INT NOT NULL,
+	editor_users_id INT,
+	psets_allocations_id INT, /* Subject */
 	leadin TEXT NOT NULL,
 	question1 TEXT NOT NULL,
 	answer1 TEXT NOT NULL,
@@ -76,5 +76,6 @@ CREATE TABLE messages(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	tossup_or_bonus TINYINT(1) NOT NULL, /* Zero for TU, One for Bonus */
 	tub_id INT NOT NULL,
+	users_id INT NOT NULL,
 	message TEXT NOT NULL
 );
