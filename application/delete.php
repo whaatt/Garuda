@@ -46,7 +46,7 @@ if(isset($_SESSION['username'])){
 		case 'tossup':
 			$tossupID = $_POST['id'];
 		
-			$tossupSelect = selectFrom('tossups', array('psets_allocations_id'), array('id'), array("'" . $tossupID . "'"));//Get tossups
+			$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $tossupID . "'"));//Get tossups
 			$tossup = $tossupSelect[0];
 			$tossup['psets_allocations_id'] = isset($tossup['psets_allocations_id']) ? $tossup['psets_allocations_id'] : '';
 			
@@ -85,19 +85,61 @@ if(isset($_SESSION['username'])){
 			
 			break;
 
+		case 'bonus':
+			$bonusID = $_POST['id'];
+		
+			$bonusSelect = selectFrom('bonuses', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $bonusID . "'"));//Get bonus
+			$bonus = $bonusSelect[0];
+			$bonus['psets_allocations_id'] = isset($bonus['psets_allocations_id']) ? $bonus['psets_allocations_id'] : '';
+			
+			$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
+			$userID = $userSelect[0]['id'];//Get current user's ID
+			
+			$permSelect = selectFrom('permissions', array('psets_allocations_id', 'role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
+			$userRole = $permSelect[0]['role'];//Get current user's role
+			$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
+			
+			$access = false;
+			
+			if ($userID == $bonus['creator_users_id']){
+				$access = true;
+			}
+			
+			else if ($userRole == 'm' and $userFocus == $bonus['psets_allocations_id'] and $userFocus != ''){
+				$access = true;
+			}
+
+			else if ($userRole == 'a' or $userRole == 'd'){
+				$access = true;
+			}
+			
+			if ($access == true){
+				deleteFrom('bonuses', array('id'), array("'" . $bonusID. "'")); //Delete this bonus from DB
+				
+				$columns = array('duplicate_bonuses_id');
+				$values = array("NULL");
+			
+				$where = array('duplicate_bonuses_id');
+				$equals = array("'" . $bonusID . "'");
+			
+				updateIn('bonuses', $columns, $values, $where, $equals);//Bubble down duplicates
+			}
+			
+			break;
+			
 		case 'message':
 			$messageID = $_POST['id'];
-			$messageSelect = selectFrom('messages', array('users_id', 'tub_id', 'tossup_or_bonus'), array('id'), array("'" . $messageID . "'"));//Get tossups
+			$messageSelect = selectFrom('messages', array('users_id', 'tub_id', 'tossup_or_bonus'), array('id'), array("'" . $messageID . "'"));//Get message
 			$message = $messageSelect[0];
 			
 			if ($message['tossup_or_bonus'] == 0){
-				$questionSelect = selectFrom('tossups', array('psets_allocations_id'), array('id'), array("'" . $message['tub_id'] . "'"));//Get tossups
+				$questionSelect = selectFrom('tossups', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $message['tub_id'] . "'"));//Get tossups
 				$question = $questionSelect[0];
 				$question['psets_allocations_id'] = isset($question['psets_allocations_id']) ? $question['psets_allocations_id'] : '';
 			}
 			
 			else{
-				$questionSelect = selectFrom('bonuses', array('psets_allocations_id'), array('id'), array("'" . $message['tub_id'] . "'"));//Get bonuses
+				$questionSelect = selectFrom('bonuses', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $message['tub_id'] . "'"));//Get bonuses
 				$question = $questionSelect[0];
 				$question['psets_allocations_id'] = isset($question['psets_allocations_id']) ? $question['psets_allocations_id'] : '';
 			}

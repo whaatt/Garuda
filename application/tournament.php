@@ -63,6 +63,8 @@ if(isset($_SESSION['username'])){
 				$subjects = array();
 			}
 			
+			$subjects = array_unique($subjects);
+			
 			if (strlen($date) > 0){
 				$pDate = date_parse_from_format('Y-m-d H:i:s', $date);//Parsed Date
 			}
@@ -100,11 +102,14 @@ if(isset($_SESSION['username'])){
 					updateIn('psets', $columns, $values, array('id'), array("'" . $_SESSION['tournament'] . "'"));//Update tournament in database
 				
 					$columns = array('title', 'director_users_id', 'created', 'target');
-					$subjectSelect = selectFrom('psets_allocations', array('subject'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects.
+					$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects.
 					
-					foreach ($subjectSelect as $entry){//Delete missing subjects
+					foreach ($subjectSelect as $entry){//Delete missing subjects from allocations, focuses, and questions
 						if (!in_array($entry['subject'], $subjects)){
 							deleteFrom('psets_allocations', array('subject', 'psets_id'), array("'" . $entry['subject'] . "'", "'" . $_SESSION['tournament'] . "'"));
+							updateIn('permissions', array('psets_allocations_id'), array("NULL"), array('psets_allocations_id'), array("'" . $entry['id'] . "'"));
+							updateIn('tossups', array('psets_allocations_id'), array("NULL"), array('psets_allocations_id'), array("'" . $entry['id'] . "'"));
+							updateIn('bonuses', array('psets_allocations_id'), array("NULL"), array('psets_allocations_id'), array("'" . $entry['id'] . "'"));
 						}
 					}
 					

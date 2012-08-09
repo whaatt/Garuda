@@ -37,6 +37,8 @@ if(isset($_SESSION['username'])){
 			$subjects = array();
 		}
 		
+		$subjects = array_unique($subjects);
+		
 		if (strlen($date) > 0){
 			$pDate = date_parse_from_format('Y-m-d H:i:s', $date);//Parsed Date
 		}
@@ -105,9 +107,8 @@ if(isset($_SESSION['username'])){
 			<form id="create" class="postform" onsubmit="submit_create(document.getElementById('create')); return false;">
 				<label>Tournament or Set Name: <input type="text" id="cre_name" name="cre_name"></label><br><br>
 				<label>Tournament Target Date: <input type="text" id="cre_date" name="cre_date"></label><br><br>
-				<label><span class="halfleft">Tournament Information:&nbsp;&nbsp;</span><span class="halfright">Subject Selection:</span><br>
-				<textarea type="text" id="cre_info" name="cre_info"></textarea>&nbsp;&nbsp;
-				<textarea type="text" id="cre_sele" name="cre_sele"></textarea></label><br><br>
+				<label>Tournament Info: <br><textarea type="text" id="cre_info" name="cre_info"></textarea></label><br><br>
+				<label>Subject Selection: <br><textarea type="text" id="cre_sele" name="cre_sele"></textarea></label><br><br>
 				<input type="submit" value="Create">
 			</form>
 		</div></div></p>			

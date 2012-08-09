@@ -3,7 +3,7 @@
 require_once('conf.php');
 require_once('query.php'); 
 
-/* Members Handler */
+/* Tossups Handler */
 
 function sortTossups($a, $b) { //Used to sort by sub-array value
    return strcmp($a[0], $b[0]);
@@ -15,7 +15,7 @@ if(isset($_SESSION['username'])){
 	if ($submit == '2'){ //Delete Tossup Submission
 		$deleteID = $_POST['id'];
 		
-		$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'tossup', 'answer', 'creator_users_id'), array('id'), array("'" . $deleteID . "'"));//Get tossup
+		$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $deleteID . "'"));//Get tossup
 		$tossup = $tossupSelect[0];
 		$tossup['psets_allocations_id'] = isset($tossup['psets_allocations_id']) ? $tossup['psets_allocations_id'] : '';
 		
@@ -111,7 +111,7 @@ if(isset($_SESSION['username'])){
 		$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'creator_users_id'), array('id'), array("'" . $id . "'"));//Get tossups
 		$tossup = $tossupSelect[0];
 		
-		$permSelect = selectFrom('permissions', array('role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
+		$permSelect = selectFrom('permissions', array('role', 'psets_allocations_id'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 		$userRole = $permSelect[0]['role'];//Get current user's role
 		$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : 'None';
 		
@@ -182,7 +182,7 @@ if(isset($_SESSION['username'])){
 		$tossup = $tossupSelect[0];
 		$tossup['psets_allocations_id'] = isset($tossupSelect[0]['psets_allocations_id']) ? $tossupSelect[0]['psets_allocations_id'] : '';
 			
-		$permSelect = selectFrom('permissions', array('role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
+		$permSelect = selectFrom('permissions', array('role', 'psets_allocations_id'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 		$userRole = $permSelect[0]['role'];//Get current user's role
 		$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
 		
@@ -196,18 +196,10 @@ if(isset($_SESSION['username'])){
 				else{
 					$duplicate = $tossupSelect[0]['id'];//It is the master
 				}
-				
-				$columns = array('duplicate_tossups_id');
-				$values = array("'" . $duplicate . "'");
-				
-				$where = array('duplicate_tossups_id');
-				$equals = array("'" . $id . "'");
-				
-				updateIn('tossups', $columns, $values, $where, $equals);//Bubble down, as well
 			}
 			
 			else{
-				$duplicate = 'NULL';//Invalid duplicate
+				$duplicate = '';//Invalid duplicate
 			}
 		}
 		
@@ -216,6 +208,14 @@ if(isset($_SESSION['username'])){
 				$columns = array('approved', 'promoted', 'duplicate_tossups_id');
 				$values = array("'" . $approved . "'", "'" . $promoted . "'", "'" . $duplicate . "'");
 				updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup markdown in database
+			
+				$columns = array('duplicate_tossups_id');
+				$values = array("'" . $duplicate . "'");
+			
+				$where = array('duplicate_tossups_id');
+				$equals = array("'" . $id . "'");
+			
+				updateIn('tossups', $columns, $values, $where, $equals);//Bubble down, as well
 			}
 			
 			else{
@@ -247,7 +247,7 @@ if(isset($_SESSION['username'])){
 		if (strlen($message) < 1000){
 			$columns = array('tossup_or_bonus', 'tub_id', 'users_id', 'message');
 			$values = array("'0'", "'" . $id . "'", "'" . $userID. "'", "'" . sanitize(trim($message), false, '<b><i><u>') . "'");
-			insertInto('messages', $columns, $values);//Add tossup to database
+			insertInto('messages', $columns, $values);//Add message to database
 			
 			?>
 			<div class="message thank-message" onclick="go_tossups()">
@@ -268,7 +268,7 @@ if(isset($_SESSION['username'])){
 	else if ($submit == '6'){ //Delete Entry Submission
 		$deleteID = $_POST['id'];
 		
-		$messageSelect = selectFrom('messages', array('tub_id'), array('id'), array("'" . $deleteID . "'"));//Get tossups
+		$messageSelect = selectFrom('messages', array('tub_id', 'users_id'), array('id'), array("'" . $deleteID . "'"));//Get tossups
 		$tossupID = $messageSelect[0]['tub_id'];
 		
 		$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'tossup', 'answer', 'creator_users_id'), array('id'), array("'" . $tossupID . "'"));//Get tossup
@@ -284,7 +284,7 @@ if(isset($_SESSION['username'])){
 		
 		$access = false;
 		
-		if ($userID == $tossup['creator_users_id']){
+		if ($userID == $tossup['creator_users_id'] or $userID == $messageSelect[0]['users_id']){
 			$access = true;
 		}
 		
@@ -322,7 +322,7 @@ if(isset($_SESSION['username'])){
 		$columns = array('id', 'psets_allocations_id', 'answer', 'duplicate_tossups_id', 'approved', 'promoted');
 		$tossupsSelect = selectFrom('tossups', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 
-		foreach ($tossupsSelect as $tossup){ //Iterate through members with some permission stored for the tournament, building up $members
+		foreach ($tossupsSelect as $tossup){ //Iterate through $tossupsSelect, building up $tossups
 			$items = array('subject'); $columns = array('id');
 			$values = array("'" . sanitize($tossup['psets_allocations_id']) . "'");
 			
