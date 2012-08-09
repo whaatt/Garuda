@@ -5,6 +5,8 @@
 
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta name="Description" content="<? echo $conf['description']; ?>"/>
+		
 		<title><? echo $conf['name']; ?></title>
 		
 		<link rel="icon" href="<? echo $conf['css_favicon']; ?>" type="image/x-icon" media="all" />
@@ -30,7 +32,7 @@
 				<h1><? echo $conf['name']; ?></h1>
 				<div class="right">
 					<p>Welcome, <strong><span id="greeting"></span></strong></p>
-					<p class="small-nav"><a href="<? echo $conf['help']; ?>">Help</a> / <a href="<? echo $conf['contact']; ?>">Contact</a> / <a href="<? echo $conf['zen']; ?>">Zen</a></p>
+					<p class="small-nav"><a href="<? echo $conf['help']; ?>">Help</a> / <a href="<? echo $conf['contact']; ?>">Contact</a> / <a href="<? echo $conf['play']; ?>">Play</a></p>
 				</div>
 			</div>
 			
