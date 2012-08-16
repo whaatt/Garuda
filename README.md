@@ -16,4 +16,5 @@ A Collaborative Quiz Bowl Packet Editor.
 
 ### Demo
 
-- No working implementation yet! I have a long way to go.
+- I have a private working implementation ready.
+- Ask me if you want to try a demonstration.
