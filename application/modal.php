@@ -190,12 +190,19 @@ if(isset($_SESSION['username'])){
 				$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
 				array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
 				
+				$userSelect = selectFrom('users', array('name', 'username'), array('id'), array("'" . $tossup['creator_users_id'] . "'"));
+				$user = $userSelect[0];//Get user info
+				
 				?>
 					<h3>Edit Tossup</h3>
 					<p><div id="edittossupform" style="text-align: center;">
 						<form id="edittossup" class="postform" onsubmit="submit_edit_tossup(document.getElementById('edittossup')); return false;">
 							<p style="text-align: left;">Use the top box to type your tossup's body, and the bottom box to type your tossup's answer. Thanks!</p><br>
-							<label>Categorize By Subject: <select id="edt_subj" name="edt_subj">
+							<?
+								echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								echo '<b>Created:</b> ' . $tossup['created'];
+							?>
+							<br><br><label>Categorize By Subject: <select id="edt_subj" name="edt_subj">
 								<?
 									foreach ($subjectSelect as $key => $entry){
 										if ($entry['id'] == $tossup['psets_allocations_id']){
@@ -387,12 +394,19 @@ if(isset($_SESSION['username'])){
 				$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
 				array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
 				
+				$userSelect = selectFrom('users', array('name', 'username'), array('id'), array("'" . $bonus['creator_users_id'] . "'"));
+				$user = $userSelect[0];//Get user info
+				
 				?>
 					<h3>Edit Bonus</h3>
 					<p><div id="editbonusform" style="text-align: center;">
 						<form id="editbonus" class="postform" onsubmit="submit_edit_bonus(document.getElementById('editbonus')); return false;">
 							<p style="text-align: left;">I apologize for the giant popup box. Anyways, the boxes are, in order, the lead-in (e.g. FTPE), the first question, the first answer, the second question, and so on until the fourth answer. You do not have to use all of the bonus fields, however (ask your tournament director).</p><br>
-							<label>Categorize By Subject: <select id="edb_subj" name="edb_subj">
+							<?
+								echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								echo '<b>Created:</b> ' . $bonus['created'];
+							?>
+							<br><br><label>Categorize By Subject: <select id="edb_subj" name="edb_subj">
 								<?
 									foreach ($subjectSelect as $key => $entry){
 										if ($entry['id'] == $bonus['psets_allocations_id']){

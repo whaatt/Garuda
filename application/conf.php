@@ -8,7 +8,7 @@ $conf['name'] = "Garuda"; //Site Name
 $conf['site'] = "http://www.skalon.com"; //Developer Site
 $conf['help'] = "http://www.skalon.com/contact/help"; //Help Site
 $conf['contact'] = "http://www.skalon.com/contact/garuda"; //Contact Site
-$conf['zen'] = "http://totemdog.com/zen/"; //1337 Site
+$conf['play'] = "http://www.skalon.com/qub"; //Play Site
 
 /* Resource Properties */
 
@@ -45,6 +45,7 @@ if (!isset($_SESSION['context'])){$_SESSION['context'] = 'main';}
 
 /* Static Text */
 
+$conf['description'] = "Collaborate with your friends to write tournaments.";
 $conf['welcome'] = "<p>Welcome to " . $conf['name'] . ", the cutting-edge tool to edit and assemble Quiz Bowl packets. To get started, click the Register tab above if you have not already created an account. Otherwise, click the Login tab. Please note that access to some parts of the site is permission-based.</p><p>If you would like to host a clone of " . $conf['name'] . " on your site, please contact me through the pertinent link. For technical support or general requests, please use the Help link. Finally, for tournament info, contact your personal administrator. Thanks for coming! Visit back soon.</p>"; //Welcome
 $conf['register'] = "<p>The form below will allow you to register for a " . $conf['name'] . " account. Your username, password, and name must be between five and twenty characters (between one and forty for the latter). Passwords should match. Please note your login information carefully, and remember that it is good practice to use your real name. You will only be able to submit your credentials when all of the fields have been filled out. Thanks for your understanding!</p>";//Registration
 $conf['login'] = "<p>You may log into " . $conf['name'] . " below. Please use the contact link in the upper right corner of the page if you forget your login. Provide as many details about your account as you can so I can conclusively verify that you are the rightful owner of your account. Sorry about any inconvenience!</p>";//Login
