@@ -82,17 +82,23 @@ function fancy_date(id){$('#'+id).datetimepicker({dateFormat: 'yy-mm-dd', timeFo
 
 function modal_set(){message('modal.php','modal',0,0,0,[po(['type'],['set'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); fancy_date('upd_date');});}
 function modal_member(id){message('modal.php','modal',0,0,0,[po(['type','id'],['member',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
-function modal_create_tossup(){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type'],['create_tossup'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#crt_body').redactor(body); $('#crt_ans').redactor(ans);});}
-function modal_edit_tossup(id){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['edit_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#edt_body').redactor(body); $('#edt_ans').redactor(ans);});}
+function modal_create_tossup(){message('modal.php','modal',0,0,0,[po(['type'],['create_tossup'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#crt_body').redactor(body); $('#crt_ans').redactor(ans);});}
+function modal_edit_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['edit_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#edt_body').redactor(body); $('#edt_ans').redactor(ans);});}
 function modal_mark_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['mark_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
-function modal_send_tossup(id){var msg = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['send_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#sdt_msg').redactor(msg);});}
+function modal_send_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['send_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#sdt_msg').redactor(msg);});}
 function modal_messages_tossup(id){message('modal.php','modal',0,0,0,[po(['type','id'],['messages_tossup',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#messages').accordion({collapsible: true, active: false});});}
-function modal_create_bonus(){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type'],['create_bonus'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('textarea[id^="crb_body"]').redactor(body); $('textarea[id^="crb_ans"]').redactor(ans); $('#crb_lead').redactor(ans);});}
-function modal_edit_bonus(id){var body = {buttons: ['bold', 'italic']}; var ans = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['edit_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('textarea[id^="edb_body"]').redactor(body); $('textarea[id^="edb_ans"]').redactor(ans); $('#edb_lead').redactor(ans);});}
+function modal_create_bonus(){message('modal.php','modal',0,0,0,[po(['type'],['create_bonus'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('textarea[id^="crb_body"]').redactor(body); $('textarea[id^="crb_ans"]').redactor(ans); $('#crb_lead').redactor(ans);});}
+function modal_edit_bonus(id){message('modal.php','modal',0,0,0,[po(['type','id'],['edit_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('textarea[id^="edb_body"]').redactor(body); $('textarea[id^="edb_ans"]').redactor(ans); $('#edb_lead').redactor(ans);});}
 function modal_mark_bonus(id){message('modal.php','modal',0,0,0,[po(['type','id'],['mark_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
-function modal_send_bonus(id){var msg = {buttons: ['bold', 'italic', 'underline']}; message('modal.php','modal',0,0,0,[po(['type','id'],['send_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#sdb_msg').redactor(msg);});}
+function modal_send_bonus(id){message('modal.php','modal',0,0,0,[po(['type','id'],['send_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#sdb_msg').redactor(msg);});}
 function modal_messages_bonus(id){message('modal.php','modal',0,0,0,[po(['type','id'],['messages_bonus',id])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html(''); $('#messages').accordion({collapsible: true, active: false});});}
 function modal_packets_assign(id, tob){message('modal.php','modal',0,0,0,[po(['type','id','tob'],['packets_assign',id,tob])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
 function modal_packets_auto(){message('modal.php','modal',0,0,0,[po(['type'],['packets_auto'])],function(){jQuery.facebox({div: '#modal', opacity: 0.6}); $('#modal').html('');});}
+
+//Editors
+
+var body = {buttons: ['bold', 'italic'], allowedTags: ['b', 'i']};
+var ans = {buttons: ['bold', 'italic', 'underline'], allowedTags: ['b', 'i', 'u']};
+var msg = {buttons: ['bold', 'italic', 'underline'], allowedTags: ['b', 'i', 'u']};
 
 /*! End JavaScript Code !*/

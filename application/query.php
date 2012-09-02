@@ -4,11 +4,11 @@
 
 function sanitize($value, $noEntity = true, $noStrip = ''){//Defend Against Injections
 	if ($noEntity){
-		return mysql_real_escape_string(htmlentities($value));
+		return mysql_real_escape_string(htmlentities(stripslashes($value)));
 	}
 	
 	else{
-		return mysql_real_escape_string(strip_tags($value, $noStrip));
+		return mysql_real_escape_string(strip_tags(stripslashes($value), $noStrip));
 	}
 }
 
