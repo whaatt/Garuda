@@ -9,31 +9,31 @@ function po(params,values){ret="<form>";for(var i=0;i<params.length;i++){ret+="<
 
 //Links
 
-function go_register(){message('register.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Register'])]);}
-function go_login(){message('login.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Login'])]);}
-function go_welcome(){message('welcome.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Welcome'])]);}
+function go_register(){message('register.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Register'])]);});}
+function go_login(){message('login.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Login'])]);});}
+function go_welcome(){message('welcome.php','content',0,0,0,[], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Welcome'])]);});}
 
-function go_dashboard(){message('dashboard.php','content',0,0,0,[]); message('menu.php','navigation',0,0,0,[po(['link'],['Dashboard'])]);}
-function go_create(){message('create.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);}
-function go_join(){message('join.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);}
-function go_account(){message('account.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);}
+function go_dashboard(){message('dashboard.php','content',0,0,0,[], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Dashboard'])]);});}
+function go_create(){message('create.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);});}
+function go_join(){message('join.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);});}
+function go_account(){message('account.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);});}
 function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]);}
 
-function go_tournament(){message('tournament.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);}
-function go_members(){message('members.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);}
-function go_tossups(){message('tossups.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);}
-function go_bonuses(){message('bonuses.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);}
-function go_packets(){message('packets.php','content',0,0,0,[po(['submit'],['0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);}
+function go_tournament(){message('tournament.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
+function go_members(){message('members.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);});}
+function go_tossups(){message('tossups.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);});}
+function go_bonuses(){message('bonuses.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);});}
+function go_packets(){message('packets.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);});}
 function go_leave(){message('leave.php','content',0,1,1,[po(['really'],['0'])]);}
 
 //Continuations
 
 function cont_dashboard(){go_dashboard(); message('greeting.php','greeting',0,0,0,[]);}
-function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])]); message('greeting.php','greeting',0,0,0,[]); go_welcome();}
+function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])], function(){message('greeting.php','greeting',0,0,0,[], function(){go_welcome();});});}
 function cont_remove(obj,fade){if(fade==1){$(obj).fadeOut();}else{$(obj).hide();}}
-function cont_tournament(id){message('tournament.php','content',0,0,0,[po(['tou_id','submit'],[id,'0'])]); message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);}
-function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])]); go_dashboard();}
-function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],[type, id])]); if (type=='set'){cont_leave();} else if (type=='member'){go_members();} else if (type=='tossup'){go_tossups();} else if (type=='bonus'){go_bonuses();}}
+function cont_tournament(id){message('tournament.php','content',0,0,0,[po(['tou_id','submit'],[id,'0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
+function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])], function(){go_dashboard();});}
+function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],[type, id])], function(){if (type=='set'){cont_leave();} else if (type=='member'){go_members();} else if (type=='tossup'){go_tossups();} else if (type=='bonus'){go_bonuses();}})}
 
 //Submissions
 
@@ -42,24 +42,24 @@ function submit_login(obj){message('login.php','loginform',0,0,1,[po(['submit'],
 function submit_create(obj){message('create.php','createform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_join(obj){message('join.php','joinform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_account(obj){message('account.php','accountform',0,0,1,[po(['submit'],['1']),obj]);}
-function submit_update(obj){message('tournament.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
-function submit_member(obj){message('members.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
-function submit_create_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
-function submit_edit_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['3']),obj]); $(document).trigger('close.facebox');}
-function submit_mark_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['4']),obj]); $(document).trigger('close.facebox');}
-function submit_send_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['5']),obj]); $(document).trigger('close.facebox');}
-function submit_create_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
-function submit_edit_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['3']),obj]); $(document).trigger('close.facebox');}
-function submit_mark_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['4']),obj]); $(document).trigger('close.facebox');}
-function submit_send_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['5']),obj]); $(document).trigger('close.facebox');}
-function submit_delete_set(){message('tournament.php','content',0,1,1,[po(['submit'],['2'])]); $(document).trigger('close.facebox');}
-function submit_delete_member(id){message('members.php','content',0,1,1,[po(['submit','id'],['2',id])]); $(document).trigger('close.facebox');}
-function submit_delete_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['2',id])]); $(document).trigger('close.facebox');}
-function submit_delete_bonus(id){message('bonuses.php','content',0,1,1,[po(['submit','id'],['2',id])]); $(document).trigger('close.facebox');}
-function submit_delete_message_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['6',id])]); $(document).trigger('close.facebox');}
-function submit_delete_message_bonus(id){message('bonuses.php','content',0,1,1,[po(['submit','id'],['6',id])]); $(document).trigger('close.facebox');}
-function submit_packets_assign(obj){message('packets.php','content',0,1,1,[po(['submit'],['1']),obj]); $(document).trigger('close.facebox');}
-function submit_packets_auto(obj){message('packets.php','content',0,1,1,[po(['submit'],['3']),obj]); $(document).trigger('close.facebox');}
+function submit_update(obj){message('tournament.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_member(obj){message('members.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_create_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_edit_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['3']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_mark_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['4']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_send_tossup(obj){message('tossups.php','content',0,1,1,[po(['submit'],['5']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_create_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_edit_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['3']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_mark_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['4']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_send_bonus(obj){message('bonuses.php','content',0,1,1,[po(['submit'],['5']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_delete_set(){message('tournament.php','content',0,1,1,[po(['submit'],['2'])], function(){$(document).trigger('close.facebox');})}
+function submit_delete_member(id){message('members.php','content',0,1,1,[po(['submit','id'],['2',id])], function(){$(document).trigger('close.facebox');})}
+function submit_delete_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['2',id])], function(){$(document).trigger('close.facebox');})}
+function submit_delete_bonus(id){message('bonuses.php','content',0,1,1,[po(['submit','id'],['2',id])], function(){$(document).trigger('close.facebox');})}
+function submit_delete_message_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['6',id])], function(){$(document).trigger('close.facebox');})}
+function submit_delete_message_bonus(id){message('bonuses.php','content',0,1,1,[po(['submit','id'],['6',id])], function(){$(document).trigger('close.facebox');})}
+function submit_packets_assign(obj){message('packets.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_packets_auto(obj){message('packets.php','content',0,1,1,[po(['submit'],['3']),obj], function(){$(document).trigger('close.facebox');})}
 
 //Initializers
 
