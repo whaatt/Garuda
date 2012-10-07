@@ -5,6 +5,10 @@ require_once('query.php');
 
 /* Modal Handler */
 
+function compareSubjects($a, $b) {
+	return strcmp($a['subject'], $b['subject']);
+}
+
 if(isset($_SESSION['username'])){
 	$type = $_POST['type'];
 	
@@ -35,6 +39,7 @@ if(isset($_SESSION['username'])){
 				
 				$parameters = array('subject');//Get Tournament Subjects
 				$subjectSelect = selectFrom('psets_allocations', $parameters, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+				usort($subjectSelect, 'compareSubjects');
 				
 				foreach ($subjectSelect as $entry){
 					$subjects = $subjects . $entry['subject'] . "\n";
@@ -73,7 +78,19 @@ if(isset($_SESSION['username'])){
 				
 				$subjectSelect = selectFrom('psets_allocations', array('subject'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
 				$roleSelect = selectFrom('permissions', array('role', 'psets_allocations_id'), array('users_id', 'psets_id'), array("'" . sanitize($userID) . "'", "'" . $_SESSION['tournament'] . "'"));//Get role and focus
-				$focusSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . $roleSelect[0]['psets_allocations_id'] . "'"));//Get focus 
+				$topics = explode(',', $roleSelect[0]['psets_allocations_id']); //Get array of foci
+				
+				if (count($topics) > 0){
+					$userFocus = array();
+					foreach ($topics as $topic){
+						$focusSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . $topic . "'"));//Get focus 
+						array_push($userFocus, $focusSelect[0]['subject']);
+					}
+				}
+				
+				else{
+					$userFocus = array('None');
+				}
 				
 				foreach ($roleSelect as $key => $parameter){
 					switch ($parameter['role']){
@@ -85,8 +102,8 @@ if(isset($_SESSION['username'])){
 				}
 				
 				array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
+				usort($subjectSelect, 'compareSubjects');
 				$userRole = $roleSelect[0]['role']; //For pre-selected option
-				$userFocus = isset($focusSelect[0]['subject']) ? $focusSelect[0]['subject'] : 'None'; //For pre-selected option
 				
 				if ($userRole != 'Manager'){//Subject switching is only for manager perms
 					$subjectSelect = array(array('subject' => 'None'));
@@ -109,19 +126,21 @@ if(isset($_SESSION['username'])){
 								}
 							?>
 						</select></label><br><br>
-						<label>Subject Focus: <select id="mem_focus" name="mem_focus">
-							<?
-								foreach ($subjectSelect as $key => $entry){
-									if ($entry['subject'] == $userFocus){
-											echo '<option selected="selected">' . $entry['subject'] . '</option>';
+						<? if ($userRole == 'Manager'){ ?>
+							<label><select id="mem_focus" name="mem_focus[]" multiple="multiple">
+								<?
+									foreach ($subjectSelect as $key => $entry){
+										if (in_array($entry['subject'], $userFocus)){
+												echo '<option selected="selected">' . $entry['subject'] . '</option>';
+										}
+										
+										else{
+											echo '<option>' . $entry['subject'] . '</option>';
+										}
 									}
-									
-									else{
-										echo '<option>' . $entry['subject'] . '</option>';
-									}
-								}
-							?>
-						</select></label><br><br>
+								?>
+							</select></label><br><br>
+						<? } ?>
 						<input type="hidden" id="mem_id" name="mem_id" value="<? echo $userID ?>">
 					</form><button type="button" onclick="submit_member(document.getElementById('member')); return false;">Update</button> or <button type="button" onclick="submit_delete_member('<? echo $userID ?>'); return false;">Delete</button>
 				</div></p>
@@ -131,7 +150,8 @@ if(isset($_SESSION['username'])){
 			break;
 		case 'create_tossup':
 			$subjectSelect = selectFrom('psets_allocations', array('subject'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
-			array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option	
+			array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
+			usort($subjectSelect, 'compareSubjects');
 
 			?>
 				<h3>Create Tossup</h3>
@@ -178,7 +198,7 @@ if(isset($_SESSION['username'])){
 				$access = true;
 			}
 			
-			else if ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id'] and $userFocus != ''){
+			else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus))){
 				$access = true;
 			}
 
@@ -189,6 +209,7 @@ if(isset($_SESSION['username'])){
 			if ($access == true){
 				$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
 				array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
+				usort($subjectSelect, 'compareSubjects');
 				
 				$userSelect = selectFrom('users', array('name', 'username'), array('id'), array("'" . $tossup['creator_users_id'] . "'"));
 				$user = $userSelect[0];//Get user info
@@ -255,9 +276,9 @@ if(isset($_SESSION['username'])){
 			
 			$permSelect = selectFrom('permissions', array('role', 'psets_allocations_id'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 			$userRole = $permSelect[0]['role'];//Get current user's role
-			$userSubject = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
+			$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
 			
-			if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and $userSubject == $tossup['psets_allocations_id'] and $userSubject != '')){
+			if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus)))){
 				?>
 					<h3>Mark Tossup</h3>
 					<p><div id="marktossupform" style="text-align: center;">
@@ -328,7 +349,8 @@ if(isset($_SESSION['username'])){
 			break;
 		case 'create_bonus':
 			$subjectSelect = selectFrom('psets_allocations', array('subject'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
-			array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option	
+			array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
+			usort($subjectSelect, 'compareSubjects');
 
 			?>
 				<h3>Create Bonus</h3>
@@ -382,7 +404,7 @@ if(isset($_SESSION['username'])){
 				$access = true;
 			}
 			
-			else if ($userRole == 'm' and $userFocus == $bonus['psets_allocations_id'] and $userFocus != ''){
+			else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus))){
 				$access = true;
 			}
 
@@ -393,6 +415,7 @@ if(isset($_SESSION['username'])){
 			if ($access == true){
 				$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));//Get subjects
 				array_push($subjectSelect, array('subject' => 'None')); //Add None for the default option
+				usort($subjectSelect, 'compareSubjects');
 				
 				$userSelect = selectFrom('users', array('name', 'username'), array('id'), array("'" . $bonus['creator_users_id'] . "'"));
 				$user = $userSelect[0];//Get user info
@@ -472,9 +495,9 @@ if(isset($_SESSION['username'])){
 			
 			$permSelect = selectFrom('permissions', array('role', 'psets_allocations_id'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 			$userRole = $permSelect[0]['role'];//Get current user's role
-			$userSubject = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
+			$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
 			
-			if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and $userSubject == $bonus['psets_allocations_id'] and $userSubject != '')){
+			if ($userRole == 'd' or $userRole == 'a' or (strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus)))){
 				?>
 					<h3>Mark Bonus</h3>
 					<p><div id="markbonusform" style="text-align: center;">
@@ -595,6 +618,7 @@ if(isset($_SESSION['username'])){
 			
 			$parameters = array('subject');//Get Tournament Subjects
 			$subjectSelect = selectFrom('psets_allocations', $parameters, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+			usort($subjectSelect, 'compareSubjects');
 			$subjects = '';
 			
 			foreach ($subjectSelect as $entry){

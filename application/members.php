@@ -57,18 +57,31 @@ if(isset($_SESSION['username'])){
 			$focus = $_POST['mem_focus'];
 			$userID = $_POST['mem_id'];
 			
-			if ($focus != 'None'){
+			if (isset($focus) and !in_array('None', $focus)){
+				$focusIDs = '';//To be used later
 				$locations = array('psets_id', 'subject');
 				$items = array("'" . $_SESSION['tournament'] . "'", "'" . $focus . "'");
 				
 				$entrySelect = selectFrom('psets_allocations', array('id'), $locations, $items);//Get ID of allocation
 				$entry = $entrySelect[0]['id'];
 				
-				$subjectSelect = selectFrom('psets_allocations', array('id'), array('subject', 'psets_id'), array("'" . sanitize($focus) . "'", "'" . $_SESSION['tournament'] . "'"));//Get subject
-				$focus = $subjectSelect[0]['id'];
+				foreach($focus as $topic){
+					$subjectSelect = selectFrom('psets_allocations', array('id'), array('subject', 'psets_id'), array("'" . sanitize($topic) . "'", "'" . $_SESSION['tournament'] . "'"));//Get subject
+					$focusIDs = $focusIDs . ',' . $subjectSelect[0]['id'];
+				}
+				
+				$focusIDs = ltrim($focusIDs, ',');
+				
+				if ($role != 'Manager'){
+					$focusIDs = 'NULL';
+				}
+				
+				else{
+					$focusIDs = "'" . sanitize($focusIDs) . "'";
+				}
 				
 				$columns = array('role', 'psets_allocations_id');
-				$values = array("'" . sanitize(strtolower($role)) . "'", "'" . sanitize($focus) . "'");
+				$values = array("'" . sanitize(strtolower($role)) . "'", $focusIDs);
 				updateIn('permissions', $columns, $values, array('psets_id', 'users_id'), array("'" . $_SESSION['tournament'] . "'", "'" . $userID . "'"));//Update member in database
 			}
 			
@@ -93,6 +106,7 @@ if(isset($_SESSION['username'])){
 	else{
 		echo $conf['members'];
 		$members = array();
+		$multiple = array();
 		
 		$columns = array('users_id', 'psets_allocations_id', 'role');
 		$permsSelect = selectFrom('permissions', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
@@ -101,7 +115,7 @@ if(isset($_SESSION['username'])){
 			$columns = array('name', 'username');
 			$userSelect = selectFrom('users', $columns, array('id'), array("'" . sanitize($perm['users_id']) . "'"));//Get tournaments.
 			
-			array_push($members, array(0 => $userSelect[0]['name'], 1 => $userSelect[0]['username'], 2 => '', 3 => '', 4 => 'Update User', 5 => $perm['users_id']));
+			array_push($members, array(0 => $userSelect[0]['name'], 1 => $userSelect[0]['username'], 2 => '', 3 => '', 4 => 'Update User', 5 => $perm['users_id'], 6 => ''));
 			
 			switch ($perm['role']){//Access Level
 				case 'd': $members[count($members)-1][2] = 'Director'; break;
@@ -111,8 +125,25 @@ if(isset($_SESSION['username'])){
 			}
 			
 			if ($perm['psets_allocations_id'] != ''){
-				$subjectSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . sanitize($perm['psets_allocations_id']) . "'"));//Get subject
-				$members[count($members)-1][3] = $subjectSelect[0]['subject'];
+				$topics = explode(',', $perm['psets_allocations_id']);
+				
+				if (count($topics) > 1){
+					$members[count($members)-1][3] = 'Multiple, Hover to See';
+					$multiple[strval(count($members)-1)] = '';
+					
+					foreach($topics as $topic){
+						$subjectSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . sanitize($topic) . "'"));//Get subject
+						$multiple[strval(count($members)-1)] = $multiple[strval(count($members)-1)] . $subjectSelect[0]['subject'] . ', ';
+					}
+					
+					$multiple[strval(count($members)-1)] = rtrim($multiple[strval(count($members)-1)], ', ');
+					$members[count($members)-1][6] = strval(count($members)-1);
+				}
+				
+				else{
+					$subjectSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . sanitize($topics[0]) . "'"));//Get subject
+					$members[count($members)-1][3] = $subjectSelect[0]['subject'];
+				}
 			}
 			
 			else{
@@ -154,7 +185,11 @@ if(isset($_SESSION['username'])){
 						echo '<td><a onclick="modal_member(' . $member[5] . '); return false;">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key != 5){
+					else if ($key == 3){
+						echo '<td><span id="' . $member[6] . '">' . $parameter . '</span></td>';
+					}
+					
+					else if ($key != 5 and $key != 6){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}
@@ -167,6 +202,10 @@ if(isset($_SESSION['username'])){
 		</table><p></p>
 		<script type="text/javascript">
 			fancy_members('members');//Make the table pretty and searchable
+			
+			<? foreach ($multiple as $key => $tip){ ?>
+				$('#<? echo $key ?>').qtip({content: '<? echo $tip; ?>'});
+			<? } ?>
 		</script>
 		<? //End Boilerplate
 	}

@@ -15,6 +15,7 @@ $conf['play'] = "http://www.skalon.com/qub"; //Play Site
 $conf['css_main'] = "css/style.css"; //Master Stylesheet Location
 $conf['css_tables'] = "css/tables.css"; //Table Stylesheet Location
 $conf['css_editor'] = "editor/css/redactor.css"; //Editor Stylesheet Location
+$conf['css_tooltip'] = "css/tooltip.css"; //Tooltip Stylesheet Location
 $conf['css_modal'] = "css/facebox.css"; //Modal Stylesheet Location
 $conf['css_ui'] = "css/ui.css"; //UI Stylesheet Location
 $conf['css_favicon'] = "css/favicon.ico"; //Favicon Location
@@ -24,6 +25,7 @@ $conf['js_scripts'] = "js/scripts.js"; //Master Scripts Location
 $conf['js_editor'] = "editor/redactor.js"; //Editor Script Location
 $conf['js_tables'] = "js/tables.js"; //Table Script Location
 $conf['js_modal'] = "js/facebox.js"; //Modal Script Location
+$conf['js_tooltip'] = "js/tooltip.js"; //Modal Script Location
 $conf['js_time'] = "js/time.js"; //Time Script Location
 $conf['js_ui'] = "js/ui.js"; //UI Script Location
 

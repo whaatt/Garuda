@@ -13,6 +13,7 @@
 		<link rel="stylesheet" href="<? echo $conf['css_main']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_tables']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_editor']; ?>" type="text/css" media="all" />
+		<link rel="stylesheet" href="<? echo $conf['css_tooltip']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_modal']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_ui']; ?>" type="text/css" media="all" />
 		
@@ -21,6 +22,7 @@
 		<script type="text/javascript" src="<? echo $conf['js_editor']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_tables']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_modal']; ?>"></script>
+		<script type="text/javascript" src="<? echo $conf['js_tooltip']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_ui']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_time']; ?>"></script>
 	</head>

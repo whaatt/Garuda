@@ -31,7 +31,7 @@ CREATE TABLE permissions (
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	users_id INT NOT NULL,
 	psets_id INT NOT NULL,
-	psets_allocations_id INT, /* Only use for managers. */
+	psets_allocations_id TEXT, /* Only use for managers. */
 	role CHAR(1) NOT NULL /* Roles: d = director, a = administrator, m = manager, and e = editor. */
 );
 

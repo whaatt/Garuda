@@ -32,7 +32,7 @@ if(isset($_SESSION['username'])){
 			$access = true;
 		}
 		
-		else if ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id'] and $userFocus != ''){
+		else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus))){
 			$access = true;
 		}
 
@@ -121,7 +121,7 @@ if(isset($_SESSION['username'])){
 			$access = true;
 		}
 		
-		else if ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id']){
+		else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus))){
 			$access = true;
 		}
 
@@ -203,7 +203,7 @@ if(isset($_SESSION['username'])){
 			}
 		}
 		
-		if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id'] and $userFocus != '')){
+		if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus)))){
 			if ($duplicate != ''){
 				$columns = array('approved', 'promoted', 'duplicate_tossups_id');
 				$values = array("'" . $approved . "'", "'" . $promoted . "'", "'" . $duplicate . "'");
@@ -288,7 +288,7 @@ if(isset($_SESSION['username'])){
 			$access = true;
 		}
 		
-		else if ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id'] and $userFocus != ''){
+		else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus))){
 			$access = true;
 		}
 
