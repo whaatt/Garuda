@@ -63,7 +63,7 @@ if(isset($_SESSION['username'])){
 				$access = true;
 			}
 			
-			else if ($userRole == 'm' and $userFocus == $tossup['psets_allocations_id'] and $userFocus != ''){
+			else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus))){
 				$access = true;
 			}
 
@@ -105,7 +105,7 @@ if(isset($_SESSION['username'])){
 				$access = true;
 			}
 			
-			else if ($userRole == 'm' and $userFocus == $bonus['psets_allocations_id'] and $userFocus != ''){
+			else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus))){
 				$access = true;
 			}
 
@@ -157,7 +157,7 @@ if(isset($_SESSION['username'])){
 				$access = true;
 			}
 			
-			else if ($userRole == 'm' and $userFocus == $question['psets_allocations_id'] and $userFocus != ''){
+			else if ($userRole == 'm' and strlen($userFocus) > 0 and in_array($question['psets_allocations_id'], explode(',', $userFocus))){
 				$access = true;
 			}
 
