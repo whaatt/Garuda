@@ -201,11 +201,11 @@ if(isset($_SESSION['username'])){
 			</tbody>
 		</table><p></p>
 		<script type="text/javascript">
-			fancy_members('members');//Make the table pretty and searchable
-			
 			<? foreach ($multiple as $key => $tip){ ?>
 				$('#<? echo $key ?>').qtip({content: '<? echo $tip; ?>'});
 			<? } ?>
+		
+			fancy_members('members');//Make the table pretty and searchable
 		</script>
 		<? //End Boilerplate
 	}
