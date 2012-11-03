@@ -6,7 +6,7 @@ require_once('query.php');
 /* Bonuses Handler */
 
 function sortBonuses($a, $b) { //Used to sort by sub-array value
-   return strcmp($a[0], $b[0]);
+	return (int) $a[0] - (int) $b[0];
 }
 
 if(isset($_SESSION['username'])){
@@ -337,7 +337,7 @@ if(isset($_SESSION['username'])){
 		
 		$bonuses = array();
 		
-		$columns = array('id', 'psets_allocations_id', 'answer1', 'answer2', 'answer3', 'answer4', 'duplicate_bonuses_id', 'approved', 'promoted');
+		$columns = array('id', 'psets_allocations_id', 'answer1', 'answer2', 'answer3', 'answer4', 'duplicate_bonuses_id', 'approved', 'promoted', 'creator_users_id');
 		$bonusesSelect = selectFrom('bonuses', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 
 		foreach ($bonusesSelect as $bonus){ //Iterate through $bonusesSelect, building up $bonuses
@@ -346,6 +346,12 @@ if(isset($_SESSION['username'])){
 			
 			$subjectSelect = selectFrom('psets_allocations', $items, $columns, $values);//Get subject.
 			$subject = isset($subjectSelect[0]['subject']) ? $subjectSelect[0]['subject'] : 'None Set';
+			
+			$items = array('name'); $columns = array('id');
+			$values = array("'" . sanitize($bonus['creator_users_id']) . "'");
+			
+			$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
+			$name = $userSelect[0]['name'];
 			
 			$duplicate = !empty($bonus['duplicate_bonuses_id']) ? $bonus['duplicate_bonuses_id'] : 'No';
 			$approved = $bonus['approved'] == '1' ? 'Yes' : 'No';
@@ -357,7 +363,7 @@ if(isset($_SESSION['username'])){
 			$answer4 = (isset($bonus['answer4']) and $bonus['answer4'] != '') ? '; ' . $bonus['answer4'] : '';
 			
 			$answer = $answer1 . $answer2 . $answer3 . $answer4;
-			array_push($bonuses, array(0 => $bonus['id'], 1 => $subject, 2 => $answer, 3 => $duplicate, 4 => $approved, 5 => $promoted, 6 => ''));
+			array_push($bonuses, array(0 => $bonus['id'], 1 => $name, 2 => $subject, 3 => $answer, 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => ''));
 		}
 		
 		//Start Boilerplate ?>
@@ -365,6 +371,7 @@ if(isset($_SESSION['username'])){
 			<thead>
 				<tr>
 					<th>ID</th>
+					<th>Creator</th>
 					<th>Subject</th>
 					<th>Answers</th>
 					<th>Duplicate</th>
@@ -377,13 +384,13 @@ if(isset($_SESSION['username'])){
 		<? //End Boilerplate
 		
 			//Print bonuses, color coding by approval/promotion
-			usort($bonuses, 'sortBonuses');
+			uasort($bonuses, 'sortBonuses');
 			foreach ($bonuses as $bonus){
-				if ($bonus[5] == 'Yes'){
+				if ($bonus[6] == 'Yes'){
 					echo '<tr class="greenRow">';
 				}
 				
-				else if ($bonus[4] == 'Yes'){
+				else if ($bonus[5] == 'Yes'){
 					echo '<tr class="blueRow">';
 				}
 				
@@ -396,11 +403,11 @@ if(isset($_SESSION['username'])){
 						echo '<td><a onclick="modal_edit_bonus(' . $parameter . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 3 or $key == 4 or $key == 5){
+					else if ($key == 4 or $key == 5 or $key == 6){
 						echo '<td><a onclick="modal_mark_bonus(' . $bonus[0] . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 6){
+					else if ($key == 7){
 						echo '<td><a onclick="modal_messages_bonus(' . $bonus[0] . ')">Show</a>/<a onclick="modal_send_bonus(' . $bonus[0] . ')">Add</a></td>';
 					}
 					

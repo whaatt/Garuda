@@ -6,7 +6,7 @@ require_once('query.php');
 /* Tossups Handler */
 
 function sortTossups($a, $b) { //Used to sort by sub-array value
-   return strcmp($a[0], $b[0]);
+	return (int) $a[0] - (int) $b[0];
 }
 
 if(isset($_SESSION['username'])){
@@ -319,7 +319,7 @@ if(isset($_SESSION['username'])){
 		
 		$tossups = array();
 		
-		$columns = array('id', 'psets_allocations_id', 'answer', 'duplicate_tossups_id', 'approved', 'promoted');
+		$columns = array('id', 'psets_allocations_id', 'answer', 'duplicate_tossups_id', 'approved', 'promoted', 'creator_users_id');
 		$tossupsSelect = selectFrom('tossups', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 
 		foreach ($tossupsSelect as $tossup){ //Iterate through $tossupsSelect, building up $tossups
@@ -329,11 +329,17 @@ if(isset($_SESSION['username'])){
 			$subjectSelect = selectFrom('psets_allocations', $items, $columns, $values);//Get subject.
 			$subject = isset($subjectSelect[0]['subject']) ? $subjectSelect[0]['subject'] : 'None Set';
 			
+			$items = array('name'); $columns = array('id');
+			$values = array("'" . sanitize($tossup['creator_users_id']) . "'");
+			
+			$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
+			$name = $userSelect[0]['name'];
+			
 			$duplicate = !empty($tossup['duplicate_tossups_id']) ? $tossup['duplicate_tossups_id'] : 'No';
 			$approved = $tossup['approved'] == '1' ? 'Yes' : 'No';
 			$promoted = $tossup['promoted'] == '1' ? 'Yes' : 'No';
 			
-			array_push($tossups, array(0 => $tossup['id'], 1 => $subject, 2 => $tossup['answer'], 3 => $duplicate, 4 => $approved, 5 => $promoted, 6 => ''));
+			array_push($tossups, array(0 => $tossup['id'], 1 => $name, 2 => $subject, 3 => $tossup['answer'], 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => ''));
 		}
 		
 		//Start Boilerplate ?>
@@ -341,6 +347,7 @@ if(isset($_SESSION['username'])){
 			<thead>
 				<tr>
 					<th>ID</th>
+					<th>Creator</th>
 					<th>Subject</th>
 					<th>Answer</th>
 					<th>Duplicate</th>
@@ -353,13 +360,13 @@ if(isset($_SESSION['username'])){
 		<? //End Boilerplate
 		
 			//Print tossups, color coding by approval/promotion
-			usort($tossups, 'sortTossups');
+			uasort($tossups, 'sortTossups');
 			foreach ($tossups as $tossup){
-				if ($tossup[5] == 'Yes'){
+				if ($tossup[6] == 'Yes'){
 					echo '<tr class="greenRow">';
 				}
 				
-				else if ($tossup[4] == 'Yes'){
+				else if ($tossup[5] == 'Yes'){
 					echo '<tr class="blueRow">';
 				}
 				
@@ -372,11 +379,11 @@ if(isset($_SESSION['username'])){
 						echo '<td><a onclick="modal_edit_tossup(' . $parameter . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 3 or $key == 4 or $key == 5){
+					else if ($key == 4 or $key == 5 or $key == 6){
 						echo '<td><a onclick="modal_mark_tossup(' . $tossup[0] . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 6){
+					else if ($key == 7){
 						echo '<td><a onclick="modal_messages_tossup(' . $tossup[0] . ')">Show</a>/<a onclick="modal_send_tossup(' . $tossup[0] . ')">Add</a></td>';
 					}
 					
