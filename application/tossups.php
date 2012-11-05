@@ -335,11 +335,14 @@ if(isset($_SESSION['username'])){
 			$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
 			$name = $userSelect[0]['name'];
 			
+			$items = array('tossup_or_bonus', 'tub_id'); $values = array("'" . '0' . "'", "'" . sanitize($tossup['id']) . "'");
+			$msgCount = strval(getNumOf('messages', $items, $values));//Get number of messages
+			
 			$duplicate = !empty($tossup['duplicate_tossups_id']) ? $tossup['duplicate_tossups_id'] : 'No';
 			$approved = $tossup['approved'] == '1' ? 'Yes' : 'No';
 			$promoted = $tossup['promoted'] == '1' ? 'Yes' : 'No';
 			
-			array_push($tossups, array(0 => $tossup['id'], 1 => $name, 2 => $subject, 3 => $tossup['answer'], 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => ''));
+			array_push($tossups, array(0 => $tossup['id'], 1 => $name, 2 => $subject, 3 => $tossup['answer'], 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => '', 8 => $msgCount));
 		}
 		
 		//Start Boilerplate ?>
@@ -384,10 +387,10 @@ if(isset($_SESSION['username'])){
 					}
 					
 					else if ($key == 7){
-						echo '<td><a onclick="modal_messages_tossup(' . $tossup[0] . ')">Show</a>/<a onclick="modal_send_tossup(' . $tossup[0] . ')">Add</a></td>';
+						echo '<td><a onclick="modal_messages_tossup(' . $tossup[0] . ')">' . $tossup[8] . '</a>/<a onclick="modal_send_tossup(' . $tossup[0] . ')">Add</a></td>';
 					}
 					
-					else{
+					else if ($key != 8){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}

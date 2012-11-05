@@ -353,6 +353,9 @@ if(isset($_SESSION['username'])){
 			$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
 			$name = $userSelect[0]['name'];
 			
+			$items = array('tossup_or_bonus', 'tub_id'); $values = array("'" . '1' . "'", "'" . sanitize($bonus['id']) . "'");
+			$msgCount = strval(getNumOf('messages', $items, $values));//Get number of messages
+			
 			$duplicate = !empty($bonus['duplicate_bonuses_id']) ? $bonus['duplicate_bonuses_id'] : 'No';
 			$approved = $bonus['approved'] == '1' ? 'Yes' : 'No';
 			$promoted = $bonus['promoted'] == '1' ? 'Yes' : 'No';
@@ -363,7 +366,7 @@ if(isset($_SESSION['username'])){
 			$answer4 = (isset($bonus['answer4']) and $bonus['answer4'] != '') ? '; ' . $bonus['answer4'] : '';
 			
 			$answer = $answer1 . $answer2 . $answer3 . $answer4;
-			array_push($bonuses, array(0 => $bonus['id'], 1 => $name, 2 => $subject, 3 => $answer, 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => ''));
+			array_push($bonuses, array(0 => $bonus['id'], 1 => $name, 2 => $subject, 3 => $answer, 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => '', 8 => $msgCount));
 		}
 		
 		//Start Boilerplate ?>
@@ -408,10 +411,10 @@ if(isset($_SESSION['username'])){
 					}
 					
 					else if ($key == 7){
-						echo '<td><a onclick="modal_messages_bonus(' . $bonus[0] . ')">Show</a>/<a onclick="modal_send_bonus(' . $bonus[0] . ')">Add</a></td>';
+						echo '<td><a onclick="modal_messages_bonus(' . $bonus[0] . ')">' . $bonus[8] . '</a>/<a onclick="modal_send_bonus(' . $bonus[0] . ')">Add</a></td>';
 					}
 					
-					else{
+					else if ($key != 8){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}
