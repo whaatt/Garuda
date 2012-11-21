@@ -5,7 +5,7 @@ require_once('query.php');
 
 /* Tossups Handler */
 
-function sortTossups($a, $b) { //Used to sort by sub-array value
+function sortTossups($a, $b){ //Used to sort by sub-array value
 	return (int) $a[0] - (int) $b[0];
 }
 
@@ -61,6 +61,10 @@ if(isset($_SESSION['username'])){
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
 		
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
+		
 		//Get POST stuff 
 		$question = $_POST['crt_body'];
 		$answer = $_POST['crt_ans'];
@@ -101,6 +105,10 @@ if(isset($_SESSION['username'])){
 	else if ($submit == '3'){ //Edit Form Submission
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
+		
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
 		
 		//Get POST stuff 
 		$id = $_POST['edt_id'];
@@ -236,9 +244,13 @@ if(isset($_SESSION['username'])){
 		}
 	}
 	
-	else if ($submit == 5){ //Send Form Submission
+	else if ($submit == '5'){ //Send Form Submission
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
+		
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
 		
 		//Get POST stuff
 		$id = $_POST['sdt_id'];

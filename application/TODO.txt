@@ -1,2 +1,4 @@
 TODO:
 	-Comment Code
+	-Science Bowl
+	-Stats Page

@@ -22,7 +22,7 @@ $conf['css_favicon'] = "css/favicon.ico"; //Favicon Location
 
 $conf['js_jQuery'] = "js/jQuery.js"; //jQuery Location
 $conf['js_scripts'] = "js/scripts.js"; //Master Scripts Location
-$conf['js_editor'] = "editor/redactor.js"; //Editor Script Location
+$conf['js_editor'] = "editor/js/redactor.js"; //Editor Script Location
 $conf['js_tables'] = "js/tables.js"; //Table Script Location
 $conf['js_modal'] = "js/facebox.js"; //Modal Script Location
 $conf['js_tooltip'] = "js/tooltip.js"; //Modal Script Location
@@ -56,7 +56,7 @@ $conf['join'] = "<p>The form below will allow you to join a previously created t
 $conf['account'] = "<p>The form below will allow you to edit your account information. Your username is listed in the upper right-hand corner of the page, and cannot be edited for security purposes. If you have an important need to change your username, please contact me with an explanation of your case, and I will definitely consider it. Your name (pre-filled) is modifiable, and you may set a new password, but your current password must validate exactly. Thank you!</p><p>Please note that you do not have to change your password when you submit this form, and you may leave the pertinent field blank. Whatever you input as your name, whether it was pre-filled or edited, will be updated in the database; you may simply leave the name field as-is and only change your password, if you would prefer that. Also note that the standard name and password requirements, as described at registration, are in effect.</p>";
 $conf['dashboard'] = "<p>The table below lists tournaments you have permission to access. They are displayed either because you created the set or you joined the set. If the set you are looking for does not appear here, please ask your tournament director for the appropriate passwords, then use the Join page to do so. Tournaments in blue have no target date, tournaments in green will be in the future, and tournaments in red are past their target. Thank you!</p>";
 $conf['footer'] = "Hastily coded by <a href='" . $conf['site'] . "'>Sanjay Kannan</a>."; //Copyright
-$conf['tournament'] = "<p>The information shown below describes the properties of this set or tournament. For security purposes, you currently cannot edit any of the following parameters; however, if you have a valid reason as to why you would want to do so, please use the contact form and your case will be certainly considered. Tournament member information (editable by administrators), tossups, and bonuses can all be found on their respective pages in the menu.</p>";
+$conf['tournament'] = "<p>The information shown below describes the properties of this set or tournament. For security purposes, you currently cannot edit any of the following parameters if you are not an administrator; however, if you have a valid reason to do so, please contact your tournament director who can hopefully help you. Tournament member information (editable by administrators), tossups, and bonuses can all be found on their respective pages in the menu.</p>";
 $conf['unauthorized'] = "<p>This page is only for authenticated users. Please refresh the page to restart your session. Sorry for any inconvenience!</p>";
 $conf['unauthorized2'] = "<p>This function is only for authenticated users. Please refresh the page to restart your session. Sorry for any inconvenience!</p>";
 $conf['noperms'] = "<p>You do not have sufficient tournament permissions to access this function. Sorry about the inconvenience!</p>";

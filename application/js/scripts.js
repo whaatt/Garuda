@@ -72,8 +72,8 @@ function init_all(){init_menu(); init_content(); init_greeting();}
 
 function fancy_sets(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tournaments found! You might want to <a onclick=\"go_create(); return false;\"><span>create</span></a> or <a onclick=\"go_join(); return false;\">join</a> one."}});}
 function fancy_members(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No members found! That sounds a little sketchy."}});}
-function fancy_tossups(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tossups found! You may want to create a new tossup."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]}]});}
-function fancy_bonuses(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No bonuses found! You may want to create a new bonus."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]}]});}
+function fancy_tossups(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No tossups found! You may want to create a new tossup."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]},{"sType":"html","aTargets":[3]}]});}
+function fancy_bonuses(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No bonuses found! You may want to create a new bonus."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]},{"sType":"html","aTargets":[3]}]});}
 function fancy_questions(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No promoted questions found. You may want to do so."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]}]});}
 function fancy_packets(id){$('#'+id).dataTable({"bJQueryUI":true,"sPaginationType":"full_numbers","oLanguage":{"sZeroRecords":"No packets found. You can create one above on this page."},"aoColumnDefs":[{"sType":"num-html","aTargets":[0]}]});}
 function fancy_date(id){$('#'+id).datetimepicker({dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss'});}

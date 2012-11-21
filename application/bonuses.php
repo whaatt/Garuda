@@ -5,7 +5,7 @@ require_once('query.php');
 
 /* Bonuses Handler */
 
-function sortBonuses($a, $b) { //Used to sort by sub-array value
+function sortBonuses($a, $b){ //Used to sort by sub-array value
 	return (int) $a[0] - (int) $b[0];
 }
 
@@ -60,7 +60,11 @@ if(isset($_SESSION['username'])){
 	else if ($submit == '1'){ //Create Form Submission
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
-		
+
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
+
 		//Get POST stuff 
 		$leadin = $_POST['crb_lead'];
 		$subject = $_POST['crb_subj'];
@@ -110,6 +114,10 @@ if(isset($_SESSION['username'])){
 	else if ($submit == '3'){ //Edit Form Submission
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
+		
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
 		
 		//Get POST stuff
 		$id = $_POST['edb_id'];
@@ -254,9 +262,13 @@ if(isset($_SESSION['username'])){
 		}
 	}
 	
-	else if ($submit == 5){ //Send Form Submission
+	else if ($submit == '5'){ //Send Form Submission
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
+		
+		foreach($_POST as &$p){ //Kill Whitespace
+			$p = trim(str_replace('&nbsp;', ' ', $p));
+		}
 		
 		//Get POST stuff
 		$id = $_POST['sdb_id'];
