@@ -57,7 +57,7 @@ table{
 }
 
 .paging_full_numbers {
-	width: 350px !important;
+	/*width: 350px !important;*/ /*I changed this to make the numbers not wrap.*/
 }
 
 .dataTables_wrapper .ui-toolbar {
@@ -65,7 +65,7 @@ table{
 }
 
 .dataTables_paginate {
-	width: auto;
+	/*width: auto;*/  /*I changed this to make the numbers not wrap.*/
 }
 
 .dataTables_info {
@@ -145,7 +145,7 @@ table.display thead th div.DataTables_sort_wrapper span {
 }
 
 .dataTables_info {
-	width: 50%;
+	/*width: 50%;*/ /*I changed this to make the numbers not wrap.*/
 	float: left;
 }
 
