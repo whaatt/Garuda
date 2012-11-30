@@ -68,7 +68,7 @@ if(isset($_SESSION['username'])){
 			$roleSelect = selectFrom('permissions', array('role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 			$role = $roleSelect[0]['role'];//Get role of current user
 			
-			if ($role != 'd'){
+			if ($role != 'd' and $role != 'a'){//Directors and Administrators. Not sure why it wasn't like this before...
 				echo $conf['noperms'];
 			}
 			
