@@ -51,7 +51,7 @@ if(isset($_SESSION['username'])){
 		$roleSelect = selectFrom('permissions', array('role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 		$role = $roleSelect[0]['role'];
 		
-		if ($role == 'd'){
+		if ($role == 'd' or $role == 'a'){//Wow, I messed this up too.
 			//Get POST stuff 
 			$role = $_POST['mem_role'];//This role is a full-name type, so later we use strtolower() on it
 			$focus = $_POST['mem_focus'];
