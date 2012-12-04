@@ -214,7 +214,7 @@ if(isset($_SESSION['username'])){
 		if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus)))){
 			if ($duplicate != ''){
 				$columns = array('approved', 'promoted', 'duplicate_tossups_id');
-				$values = array("'" . $approved . "'", "'" . $promoted . "'", "'" . $duplicate . "'");
+				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'");
 				updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup markdown in database
 			
 				$columns = array('duplicate_tossups_id');

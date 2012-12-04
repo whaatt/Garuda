@@ -232,7 +232,7 @@ if(isset($_SESSION['username'])){
 		if ($userRole == 'd' or $userRole == 'a' or (strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus)))){
 			if ($duplicate != ''){
 				$columns = array('approved', 'promoted', 'duplicate_bonuses_id');
-				$values = array("'" . $approved . "'", "'" . $promoted . "'", "'" . $duplicate . "'");
+				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'");
 				updateIn('bonuses', $columns, $values, array('id'), array("'" . $id . "'"));//Update bonus markdown in database
 			
 				$columns = array('duplicate_bonuses_id');
