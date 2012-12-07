@@ -133,10 +133,10 @@ if(isset($_SESSION['username'])){
 					
 					foreach($topics as $topic){
 						$subjectSelect = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . sanitize($topic) . "'"));//Get subject
-						$multiple[strval(count($members)-1)] = $multiple[strval(count($members)-1)] . $subjectSelect[0]['subject'] . ', ';
+						$multiple[strval(count($members)-1)] = $multiple[strval(count($members)-1)] . $subjectSelect[0]['subject'] . '<br>';
 					}
 					
-					$multiple[strval(count($members)-1)] = rtrim($multiple[strval(count($members)-1)], ', ');
+					$multiple[strval(count($members)-1)] = rtrim($multiple[strval(count($members)-1)], '<br>');
 					$members[count($members)-1][6] = strval(count($members)-1);
 				}
 				
