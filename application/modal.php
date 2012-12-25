@@ -263,7 +263,7 @@ if(isset($_SESSION['username'])){
 		case 'mark_tossup':
 			$tossupID = $_POST['id'];
 			
-			$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'duplicate_tossups_id', 'approved', 'promoted'), array('id'), array("'" . $tossupID . "'"));//Get tossups
+			$tossupSelect = selectFrom('tossups', array('psets_allocations_id', 'duplicate_tossups_id', 'approved', 'promoted', 'difficulty'), array('id'), array("'" . $tossupID . "'"));//Get tossups
 			$tossup = $tossupSelect[0];
 			$tossup['psets_allocations_id'] = isset($tossup['psets_allocations_id']) ? $tossup['psets_allocations_id'] : '';
 			
@@ -278,12 +278,28 @@ if(isset($_SESSION['username'])){
 			$userRole = $permSelect[0]['role'];//Get current user's role
 			$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
 			
+			$difficulties = array('Easy', 'Medium', 'Hard');
+			$difficulty = $tossup['difficulty'];
+			
 			if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus)))){
 				?>
 					<h3>Mark Tossup</h3>
 					<p><div id="marktossupform" style="text-align: center;">
 						<form id="marktossup" class="postform" onsubmit="submit_mark_tossup(document.getElementById('marktossup')); return false;">
 							<p style="text-align: left;">Both administrators and managers may approve a tossup, but administrators may also promote a tossup for packet use. If you mark a duplicate that is already the duplicate of another tossup, the identifier will be inherited from the master version, if that makes sense.</p><br>
+							<label>Difficulty: <select id="mrt_dif" name="mrt_dif">
+								<?
+									foreach ($difficulties as $level){
+										if (substr(lcfirst($level), 0, 1) == $difficulty){
+											echo '<option selected="selected">' . $level . '</option>';
+										}
+										
+										else{
+											echo '<option>' . $level . '</option>';
+										}
+									}
+								?>
+							</select></label><br><br>
 							<label>Tossup Approved: <input type="checkbox" id="mrt_app" name="mrt_app" <? if ($approved == 1){echo 'checked="yes"';} ?>></label><br>
 							<label>Tossup Promoted: <input type="checkbox" id="mrt_pro" name="mrt_pro" <? if ($promoted == 1){echo 'checked="yes"';} ?> <? if ($userRole == 'm'){echo 'disabled="disabled"';} ?>></label><br><br>
 							<label>Duplicate ID: <input type="text" id="mrt_dup" name="mrt_dup" style="width: 25px;" value=<? echo $duplicate; ?>></label><br><br>
@@ -482,7 +498,7 @@ if(isset($_SESSION['username'])){
 		case 'mark_bonus':
 			$bonusID = $_POST['id'];
 			
-			$bonusSelect = selectFrom('bonuses', array('psets_allocations_id', 'duplicate_bonuses_id', 'approved', 'promoted'), array('id'), array("'" . $bonusID . "'"));//Get bonuses
+			$bonusSelect = selectFrom('bonuses', array('psets_allocations_id', 'duplicate_bonuses_id', 'approved', 'promoted', 'difficulty'), array('id'), array("'" . $bonusID . "'"));//Get bonuses
 			$bonus = $bonusSelect[0];
 			$bonus['psets_allocations_id'] = isset($bonus['psets_allocations_id']) ? $bonus['psets_allocations_id'] : '';
 			
@@ -497,12 +513,28 @@ if(isset($_SESSION['username'])){
 			$userRole = $permSelect[0]['role'];//Get current user's role
 			$userFocus = isset($permSelect[0]['psets_allocations_id']) ? $permSelect[0]['psets_allocations_id'] : '';
 			
+			$difficulties = array('Easy', 'Medium', 'Hard');
+			$difficulty = $bonus['difficulty'];
+			
 			if ($userRole == 'd' or $userRole == 'a' or (strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus)))){
 				?>
 					<h3>Mark Bonus</h3>
 					<p><div id="markbonusform" style="text-align: center;">
 						<form id="markbonus" class="postform" onsubmit="submit_mark_bonus(document.getElementById('markbonus')); return false;">
 							<p style="text-align: left;">Both administrators and managers may approve a bonus, but administrators may also promote a bonus for packet use. If you mark a duplicate that is already the duplicate of another bonus, the identifier will be inherited from the master version, if that makes sense.</p><br>
+							<label>Difficulty: <select id="mrb_dif" name="mrb_dif">
+								<?
+									foreach ($difficulties as $level){
+										if (substr(lcfirst($level), 0, 1) == $difficulty){
+											echo '<option selected="selected">' . $level . '</option>';
+										}
+										
+										else{
+											echo '<option>' . $level . '</option>';
+										}
+									}
+								?>
+							</select></label><br><br>
 							<label>Bonus Approved: <input type="checkbox" id="mrb_app" name="mrb_app" <? if ($approved == 1){echo 'checked="yes"';} ?>></label><br>
 							<label>Bonus Promoted: <input type="checkbox" id="mrb_pro" name="mrb_pro" <? if ($promoted == 1){echo 'checked="yes"';} ?> <? if ($userRole == 'm'){echo 'disabled="disabled"';} ?>></label><br><br>
 							<label>Duplicate ID: <input type="text" id="mrb_dup" name="mrb_dup" style="width: 25px;" value=<? echo $duplicate; ?>></label><br><br>

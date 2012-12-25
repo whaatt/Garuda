@@ -44,9 +44,11 @@ CREATE TABLE tossups(
 	tossup TEXT NOT NULL,
 	answer TEXT NOT NULL,
 	duplicate_tossups_id INT,
+	difficulty VARCHAR(1) NOT NULL DEFAULT 'm', /* Difficulties: e = easy, m = medium, and h = hard. */
 	approved TINYINT(1) NOT NULL, /* Initialize with zero. */
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
+	round_num INT,
 	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
 );
 
@@ -66,9 +68,11 @@ CREATE TABLE bonuses(
 	question4 TEXT,
 	answer4 TEXT,
 	duplicate_bonuses_id INT,
+	difficulty VARCHAR(1) NOT NULL DEFAULT 'm', /* Difficulties: e = easy, m = medium, and h = hard. */
 	approved TINYINT(1) NOT NULL, /* Initialize with zero. */
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
+	round_num INT,
 	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
 );
 

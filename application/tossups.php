@@ -181,6 +181,12 @@ if(isset($_SESSION['username'])){
 		
 		//Get POST stuff 
 		$id = $_POST['mrt_id'];
+		$difficulty = $_POST['mrt_dif'];
+		
+		if ($difficulty == 'Easy') { $difficulty = 'e'; }
+		else if ($difficulty == 'Medium') { $difficulty = 'm'; }
+		else if ($difficulty == 'Hard') { $difficulty = 'h'; }
+		else { $difficulty = 'm'; } //Protect against POST injection, but I'm sort of inconsistent
 		
 		$approved = isset($_POST['mrt_app']) and $_POST['mrt_app'] == '' ? '0' : '1';
 		$promoted = isset($_POST['mrt_pro']) and $_POST['mrt_pro'] == '' ? '0' : '1';
@@ -213,8 +219,8 @@ if(isset($_SESSION['username'])){
 		
 		if ($userRole == 'd' or $userRole == 'a' or ($userRole == 'm' and strlen($userFocus) > 0 and in_array($tossup['psets_allocations_id'], explode(',', $userFocus)))){
 			if ($duplicate != ''){
-				$columns = array('approved', 'promoted', 'duplicate_tossups_id');
-				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'");
+				$columns = array('approved', 'promoted', 'duplicate_tossups_id', 'difficulty');
+				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'", "'" . $difficulty . "'");
 				updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup markdown in database
 			
 				$columns = array('duplicate_tossups_id');
@@ -227,8 +233,8 @@ if(isset($_SESSION['username'])){
 			}
 			
 			else{
-				$columns = array('approved', 'promoted', 'duplicate_tossups_id');
-				$values = array("'" . $approved . "'", "'" . $promoted . "'", "NULL");
+				$columns = array('approved', 'promoted', 'duplicate_tossups_id', 'difficulty');
+				$values = array("'" . $approved . "'", "'" . $promoted . "'", "NULL", "'" . $difficulty . "'");
 				updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup markdown in database
 			}
 			
@@ -331,7 +337,7 @@ if(isset($_SESSION['username'])){
 		
 		$tossups = array();
 		
-		$columns = array('id', 'psets_allocations_id', 'answer', 'duplicate_tossups_id', 'approved', 'promoted', 'creator_users_id');
+		$columns = array('id', 'psets_allocations_id', 'answer', 'duplicate_tossups_id', 'approved', 'promoted', 'creator_users_id', 'difficulty');
 		$tossupsSelect = selectFrom('tossups', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 
 		foreach ($tossupsSelect as $tossup){ //Iterate through $tossupsSelect, building up $tossups
@@ -354,7 +360,11 @@ if(isset($_SESSION['username'])){
 			$approved = $tossup['approved'] == '1' ? 'Yes' : 'No';
 			$promoted = $tossup['promoted'] == '1' ? 'Yes' : 'No';
 			
-			array_push($tossups, array(0 => $tossup['id'], 1 => $name, 2 => $subject, 3 => $tossup['answer'], 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => '', 8 => $msgCount));
+			if ($tossup['difficulty'] == 'e') { $difficulty = 'Easy'; }
+			else if ($tossup['difficulty'] == 'm') { $difficulty = 'Medium'; }
+			else if ($tossup['difficulty'] == 'h') { $difficulty = 'Hard'; }
+			
+			array_push($tossups, array(0 => $tossup['id'], 1 => $name, 2 => $subject, 3 => $tossup['answer'], 4 => $difficulty, 5 => $duplicate, 6 => $approved, 7 => $promoted, 8 => '', 9 => $msgCount));
 		}
 		
 		//Start Boilerplate ?>
@@ -365,6 +375,7 @@ if(isset($_SESSION['username'])){
 					<th>Creator</th>
 					<th>Subject</th>
 					<th>Answer</th>
+					<th>Difficulty</th>
 					<th>Duplicate</th>
 					<th>Approved</th>
 					<th>Promoted</th>
@@ -377,11 +388,11 @@ if(isset($_SESSION['username'])){
 			//Print tossups, color coding by approval/promotion
 			uasort($tossups, 'sortTossups');
 			foreach ($tossups as $tossup){
-				if ($tossup[6] == 'Yes'){
+				if ($tossup[7] == 'Yes'){
 					echo '<tr class="greenRow">';
 				}
 				
-				else if ($tossup[5] == 'Yes'){
+				else if ($tossup[6] == 'Yes'){
 					echo '<tr class="blueRow">';
 				}
 				
@@ -394,15 +405,15 @@ if(isset($_SESSION['username'])){
 						echo '<td><a onclick="modal_edit_tossup(' . $parameter . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 4 or $key == 5 or $key == 6){
+					else if ($key == 4 or $key == 5 or $key == 6 or $key == 7){
 						echo '<td><a onclick="modal_mark_tossup(' . $tossup[0] . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 7){
-						echo '<td><a onclick="modal_messages_tossup(' . $tossup[0] . ')">' . $tossup[8] . '</a>/<a onclick="modal_send_tossup(' . $tossup[0] . ')">Add</a></td>';
+					else if ($key == 8){
+						echo '<td><a onclick="modal_messages_tossup(' . $tossup[0] . ')">' . $tossup[9] . '</a>/<a onclick="modal_send_tossup(' . $tossup[0] . ')">Add</a></td>';
 					}
 					
-					else if ($key != 8){
+					else if ($key != 9){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}

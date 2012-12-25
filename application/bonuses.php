@@ -199,6 +199,12 @@ if(isset($_SESSION['username'])){
 		
 		//Get POST stuff 
 		$id = $_POST['mrb_id'];
+		$difficulty = $_POST['mrb_dif'];
+		
+		if ($difficulty == 'Easy') { $difficulty = 'e'; }
+		else if ($difficulty == 'Medium') { $difficulty = 'm'; }
+		else if ($difficulty == 'Hard') { $difficulty = 'h'; }
+		else { $difficulty = 'm'; } //Protect against POST injection, but I'm sort of inconsistent
 		
 		$approved = isset($_POST['mrb_app']) and $_POST['mrb_app'] == '' ? '0' : '1';
 		$promoted = isset($_POST['mrb_pro']) and $_POST['mrb_pro'] == '' ? '0' : '1';
@@ -231,8 +237,8 @@ if(isset($_SESSION['username'])){
 		
 		if ($userRole == 'd' or $userRole == 'a' or (strlen($userFocus) > 0 and in_array($bonus['psets_allocations_id'], explode(',', $userFocus)))){
 			if ($duplicate != ''){
-				$columns = array('approved', 'promoted', 'duplicate_bonuses_id');
-				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'");
+				$columns = array('approved', 'promoted', 'duplicate_bonuses_id', 'difficulty');
+				$values = array("'" . $approved . "'", "'" . ($userRole == 'm' ? '0' : $promoted) . "'", "'" . $duplicate . "'", "'" . $difficulty . "'");
 				updateIn('bonuses', $columns, $values, array('id'), array("'" . $id . "'"));//Update bonus markdown in database
 			
 				$columns = array('duplicate_bonuses_id');
@@ -245,8 +251,8 @@ if(isset($_SESSION['username'])){
 			}
 			
 			else{
-				$columns = array('approved', 'promoted', 'duplicate_bonuses_id');
-				$values = array("'" . $approved . "'", "'" . $promoted . "'", "NULL");
+				$columns = array('approved', 'promoted', 'duplicate_bonuses_id', 'difficulty');
+				$values = array("'" . $approved . "'", "'" . $promoted . "'", "NULL", "'" . $difficulty . "'");
 				updateIn('bonuses', $columns, $values, array('id'), array("'" . $id . "'"));//Update bonus markdown in database
 			}
 			
@@ -349,7 +355,7 @@ if(isset($_SESSION['username'])){
 		
 		$bonuses = array();
 		
-		$columns = array('id', 'psets_allocations_id', 'answer1', 'answer2', 'answer3', 'answer4', 'duplicate_bonuses_id', 'approved', 'promoted', 'creator_users_id');
+		$columns = array('id', 'psets_allocations_id', 'answer1', 'answer2', 'answer3', 'answer4', 'duplicate_bonuses_id', 'approved', 'promoted', 'creator_users_id', 'difficulty');
 		$bonusesSelect = selectFrom('bonuses', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 
 		foreach ($bonusesSelect as $bonus){ //Iterate through $bonusesSelect, building up $bonuses
@@ -377,8 +383,12 @@ if(isset($_SESSION['username'])){
 			$answer3 = (isset($bonus['answer3']) and $bonus['answer3'] != '') ? '; ' . $bonus['answer3'] : '';
 			$answer4 = (isset($bonus['answer4']) and $bonus['answer4'] != '') ? '; ' . $bonus['answer4'] : '';
 			
+			if ($bonus['difficulty'] == 'e') { $difficulty = 'Easy'; }
+			else if ($bonus['difficulty'] == 'm') { $difficulty = 'Medium'; }
+			else if ($bonus['difficulty'] == 'h') { $difficulty = 'Hard'; }
+			
 			$answer = $answer1 . $answer2 . $answer3 . $answer4;
-			array_push($bonuses, array(0 => $bonus['id'], 1 => $name, 2 => $subject, 3 => $answer, 4 => $duplicate, 5 => $approved, 6 => $promoted, 7 => '', 8 => $msgCount));
+			array_push($bonuses, array(0 => $bonus['id'], 1 => $name, 2 => $subject, 3 => $answer, 4 => $difficulty, 5 => $duplicate, 6 => $approved, 7 => $promoted, 8 => '', 9 => $msgCount));
 		}
 		
 		//Start Boilerplate ?>
@@ -389,6 +399,7 @@ if(isset($_SESSION['username'])){
 					<th>Creator</th>
 					<th>Subject</th>
 					<th>Answers</th>
+					<th>Difficulty</th>
 					<th>Duplicate</th>
 					<th>Approved</th>
 					<th>Promoted</th>
@@ -401,11 +412,11 @@ if(isset($_SESSION['username'])){
 			//Print bonuses, color coding by approval/promotion
 			uasort($bonuses, 'sortBonuses');
 			foreach ($bonuses as $bonus){
-				if ($bonus[6] == 'Yes'){
+				if ($bonus[7] == 'Yes'){
 					echo '<tr class="greenRow">';
 				}
 				
-				else if ($bonus[5] == 'Yes'){
+				else if ($bonus[6] == 'Yes'){
 					echo '<tr class="blueRow">';
 				}
 				
@@ -418,15 +429,15 @@ if(isset($_SESSION['username'])){
 						echo '<td><a onclick="modal_edit_bonus(' . $parameter . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 4 or $key == 5 or $key == 6){
+					else if ($key == 4 or $key == 5 or $key == 6 or $key == 7){
 						echo '<td><a onclick="modal_mark_bonus(' . $bonus[0] . ')">' . $parameter . '</a></td>';
 					}
 					
-					else if ($key == 7){
-						echo '<td><a onclick="modal_messages_bonus(' . $bonus[0] . ')">' . $bonus[8] . '</a>/<a onclick="modal_send_bonus(' . $bonus[0] . ')">Add</a></td>';
+					else if ($key == 8){
+						echo '<td><a onclick="modal_messages_bonus(' . $bonus[0] . ')">' . $bonus[9] . '</a>/<a onclick="modal_send_bonus(' . $bonus[0] . ')">Add</a></td>';
 					}
 					
-					else if ($key != 8){
+					else if ($key != 9){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}
