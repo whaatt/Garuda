@@ -1,2 +1,5 @@
 RewriteEngine On
-RewriteRule ^packet/([0-9]+)/?$ packets.php?packet=$1&submit=4 [NC,L] # Handle packet requests
+RewriteRule ^packet/qb/([0-9]+)/?$ packets.php?packet=$1&submit=4 [NC,L] # Handle packet requests - QB HTML
+RewriteRule ^packet/qb/pdf/([0-9]+)/?$ packets.php?packet=$1&submit=5 [NC,L] # Handle packet requests - QB PDF
+RewriteRule ^packet/sb/([0-9]+)/?$ packets.php?packet=$1&submit=6 [NC,L] # Handle packet requests - SB HTML
+RewriteRule ^packet/sb/pdf/([0-9]+)/?$ packets.php?packet=$1&submit=7 [NC,L] # Handle packet requests - SB PDF

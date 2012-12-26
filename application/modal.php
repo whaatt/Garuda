@@ -612,13 +612,15 @@ if(isset($_SESSION['username'])){
 			$role = $permSelect[0]['role'];//Get current user's role
 			
 			if ($type == 0){
-				$questionSelect = selectFrom('tossups', array('round_id'), array('id'), array("'" . $questionID . "'"));
+				$questionSelect = selectFrom('tossups', array('round_id', 'round_num'), array('id'), array("'" . $questionID . "'"));
 				$round = (isset($questionSelect[0]['round_id']) and $questionSelect[0]['round_id'] != '') ? $questionSelect[0]['round_id'] : '';
+				$number = (isset($questionSelect[0]['round_num']) and $questionSelect[0]['round_num'] != '') ? $questionSelect[0]['round_num'] : '';
 			}
 			
 			else{
-				$questionSelect = selectFrom('bonuses', array('round_id'), array('id'), array("'" . $questionID . "'"));
+				$questionSelect = selectFrom('bonuses', array('round_id', 'round_num'), array('id'), array("'" . $questionID . "'"));
 				$round = (isset($questionSelect[0]['round_id']) and $questionSelect[0]['round_id'] != '') ? $questionSelect[0]['round_id'] : '';
+				$number = (isset($questionSelect[0]['round_num']) and $questionSelect[0]['round_num'] != '') ? $questionSelect[0]['round_num'] : '';
 			}
 			
 			if ($role == 'd' or $role == 'a'){
@@ -626,8 +628,9 @@ if(isset($_SESSION['username'])){
 					<h3>Assign Packet</h3>
 					<p><div id="packetsassignform" style="text-align: center;">
 						<form id="packetsassign" class="postform" onsubmit="submit_packets_assign(document.getElementById('packetsassign')); return false;">
-							<p style="text-align: left;">The input field below will allow you to assign a packet ID to this question. You may use any number, even if it is not already a packet; type nothing to de-assign this.</p><br>
-							<label>Packet ID: <input type="text" id="asp_set" name="asp_set" style="width: 25px;" value="<? echo $round; ?>"></label><br><br>
+							<p style="text-align: left;">The input field below will allow you to assign a packet ID to this question. You may use any number, even if it is not already a packet; type nothing to de-assign this. You may also assign a question number; if these are duplicated or not sequential throughout the given packet, the algorithm will make its best guess.</p><br>
+							<label>Packet ID: <input type="text" id="asp_set" name="asp_set" style="width: 25px;" value="<? echo $round; ?>"></label><br>
+							<label>Question: <input type="text" id="asp_num" name="asp_num" style="width: 25px;" value="<? echo $number; ?>"></label><br><br>
 							<input type="hidden" id="asp_id" name="asp_id" value="<? echo $questionID; ?>">
 							<input type="hidden" id="asp_type" name="asp_type" value="<? echo $type; ?>">
 						</form><button type="button" onclick="submit_packets_assign(document.getElementById('packetsassign')); return false;">Assign</button>

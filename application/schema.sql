@@ -48,7 +48,7 @@ CREATE TABLE tossups(
 	approved TINYINT(1) NOT NULL, /* Initialize with zero. */
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
-	round_num INT,
+	round_num TEXT,
 	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE bonuses(
 	approved TINYINT(1) NOT NULL, /* Initialize with zero. */
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
-	round_num INT,
+	round_num TEXT,
 	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
 );
 
