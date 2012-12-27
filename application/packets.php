@@ -437,6 +437,7 @@ if(isset($_SESSION['username'])){
 								
 								if ($alpha < 0){
 									$type = $index; //$subjects index
+									break;
 								}
 							}
 							
