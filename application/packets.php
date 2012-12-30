@@ -370,7 +370,7 @@ if(isset($_SESSION['username'])){
 					while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
 						$found = false;
 						
-						while ($found == false){
+						while ($found == false and count($picksTU) > 0){ //Second condition should be unnecessary
 							$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
 							
 							foreach ($picksTU as $index => $value){ //Get Random Topic
@@ -395,7 +395,6 @@ if(isset($_SESSION['username'])){
 							
 							if ($found != true){ //Delete Topic
 								unset($picksTU[$type]);
-								$picksTU = array_values($picksTU);
 							}
 							
 							else{
@@ -429,7 +428,7 @@ if(isset($_SESSION['username'])){
 					while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
 						$found = false;
 						
-						while ($found == false){
+						while ($found == false and count($picksB) > 0){
 							$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
 							
 							foreach ($picksB as $index => $value){ //Get Random Topic
@@ -454,7 +453,6 @@ if(isset($_SESSION['username'])){
 							
 							if ($found != true){ //Delete Topic
 								unset($picksB[$type]);
-								$picksB = array_values($picksB);
 							}
 							
 							else{
