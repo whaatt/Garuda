@@ -166,9 +166,9 @@ if(isset($_SESSION['username'])){
 					updateIn('bonuses', $columns, $values, array('id'), array("'" . $id . "'"));//Update bonus in database
 				}
 				
-				else{//Subject NULL in DB
-					$columns = array('psets_allocations_id', 'leadin', 'question1', 'question2', 'question3', 'question4', 'answer1', 'answer2', 'answer3', 'answer4', 'editor_users_id');
-					$values = array("NULL", "'" . sanitize(trim($leadin), false, '<b><i><u>') . "'", "'" . sanitize(trim($body1), false, '<b><i>') . "'", "'" . sanitize(trim($body2), false, '<b><i>') . "'", "'" . sanitize(trim($body3), false, '<b><i>') . "'", "'" . sanitize(trim($body4), false, '<b><i>') . "'", "'" . sanitize(trim($answer1), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer2), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer3), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer4), false, '<b><i><u>') . "'", "'" . $userID . "'");
+				else{//Subject NULL in DB - why oh why did I do this...btw de-assign from packets
+					$columns = array('psets_allocations_id', 'leadin', 'question1', 'question2', 'question3', 'question4', 'answer1', 'answer2', 'answer3', 'answer4', 'editor_users_id', 'round_id', 'round_num');
+					$values = array("NULL", "'" . sanitize(trim($leadin), false, '<b><i><u>') . "'", "'" . sanitize(trim($body1), false, '<b><i>') . "'", "'" . sanitize(trim($body2), false, '<b><i>') . "'", "'" . sanitize(trim($body3), false, '<b><i>') . "'", "'" . sanitize(trim($body4), false, '<b><i>') . "'", "'" . sanitize(trim($answer1), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer2), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer3), false, '<b><i><u>') . "'", "'" . sanitize(trim($answer4), false, '<b><i><u>') . "'", "'" . $userID . "'", "''", "''");
 					updateIn('bonuses', $columns, $values, array('id'), array("'" . $id . "'"));//Update bonus in database
 				}
 			

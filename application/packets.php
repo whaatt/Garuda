@@ -16,7 +16,65 @@ function isPosInt($input){
 }
 
 function sortQuestions($a, $b){ //Used to sort by sub-array value
-	return (int) $a['round_num'] - (int) $b['round_num'];
+	return (int) $a['round_num'] - (int) $b['round_num']; //Don't Worry, (int) '' == 0
+	//round_num should never be NULL in the DB by the time this function is applied
+}
+
+function nextOpenPacket(){ //Find unused space in packets
+	$packet = 1; 
+	while (true){
+		$columns = array('promoted', 'psets_id', 'round_id');
+		$where = array("'1'", "'" . $_SESSION['tournament'] . "'", "'" . strval($packet) . "'");
+		
+		$count = getNumOf('tossups', $columns, $where);
+		$count = $count + getNumOf('bonuses', $columns, $where);
+
+		if ($count == 0){
+			return $packet;
+		}
+		
+		else{
+			$packet = $packet + 1;
+		}
+	}
+}
+
+function nextOpenTossup($packet){
+	$tossup = 1; 
+	while (true){
+		$columns = array('promoted', 'psets_id', 'round_id', 'round_num');
+		$where = array("'1'", "'" . $_SESSION['tournament'] . "'", "'" . strval($packet) . "'", "'" . strval($tossup) . "'");
+		
+		//getNumOf should be faster than selectFrom
+		$count = getNumOf('tossups', $columns, $where);
+		
+		if ($count == 0){
+			return $tossup;
+		}
+		
+		else{
+			$tossup = $tossup + 1;
+		}
+	}
+}
+
+function nextOpenBonus($packet){
+	$bonus = 1; 
+	while (true){
+		$columns = array('promoted', 'psets_id', 'round_id', 'round_num');
+		$where = array("'1'", "'" . $_SESSION['tournament'] . "'", "'" . strval($packet) . "'", "'" . strval($bonus) . "'");
+		
+		//getNumOf should be faster than selectFrom
+		$count = getNumOf('bonuses', $columns, $where);
+		
+		if ($count == 0){
+			return $bonus;
+		}
+		
+		else{
+			$bonus = $bonus + 1;
+		}
+	}
 }
 
 function shuffle_assoc($list) { 
@@ -239,23 +297,45 @@ if(isset($_SESSION['username'])){
 			$setNum = ltrim(preg_replace('/\D/', '', $setNum),'0');
 			
 			if ($type == 0){
-				updateIn('tossups', array('round_id', 'round_num'), array("'" . $setID . "'", "'" . $setNum . "'"), array('id'), array("'" . $tobID . "'"));
+				$tossupSelect = selectFrom('tossups', array('psets_allocations_id'), array('id'), array("'" . $tobID . "'"));
+				if (isset($tossupSelect[0]['psets_allocations_id']) and $tossupSelect[0]['psets_allocations_id'] != ''){
+					updateIn('tossups', array('round_id', 'round_num'), array("'" . $setID . "'", "'" . $setNum . "'"), array('id'), array("'" . $tobID . "'"));
 					
-				?>
-					<div class="message thank-message" onclick="go_packets()">
-						<p><strong>You have successfully assigned this tossup. (Click to refresh.)</strong></p>
-					</div>
-				<?
+					?>
+						<div class="message thank-message" onclick="go_packets()">
+							<p><strong>You have successfully assigned this tossup. (Click to refresh.)</strong></p>
+						</div>
+					<?
+				}
+				
+				else{
+					?>
+						<div class="message error-message" onclick="cont_remove(this, 1);">
+							<p><strong>You must assign a subject to this tossup. (Click to hide.)</strong></p>
+						</div>
+					<?
+				}
 			}
 			
 			else{
-				updateIn('bonuses', array('round_id', 'round_num'), array("'" . $setID . "'", "'" . $setNum . "'"), array('id'), array("'" . $tobID . "'"));
-					
-				?>
-					<div class="message thank-message" onclick="go_packets()">
-						<p><strong>You have successfully assigned this bonus. (Click to refresh.)</strong></p>
-					</div>
-				<?
+				$bonusSelect = selectFrom('bonuses', array('psets_allocations_id'), array('id'), array("'" . $tobID . "'"));
+				if (isset($bonusSelect[0]['psets_allocations_id']) and $bonusSelect[0]['psets_allocations_id'] != ''){
+					updateIn('bonuses', array('round_id', 'round_num'), array("'" . $setID . "'", "'" . $setNum . "'"), array('id'), array("'" . $tobID . "'"));
+						
+					?>
+						<div class="message thank-message" onclick="go_packets()">
+							<p><strong>You have successfully assigned this bonus. (Click to refresh.)</strong></p>
+						</div>
+					<?
+				}
+				
+				else{
+					?>
+						<div class="message error-message" onclick="cont_remove(this, 1);">
+							<p><strong>You must assign a subject to this bonus. (Click to hide.)</strong></p>
+						</div>
+					<?
+				}
 			}
 		}
 		
@@ -269,6 +349,9 @@ if(isset($_SESSION['username'])){
 		$tossupNum = trim(ltrim($_POST['aup_tu'], '0'));
 		$bonusNum = trim(ltrim($_POST['aup_b'], '0'));
 		$allocations = $_POST['aup_alloc'];
+		
+		$preserve = isset($_POST['aup_pre']) and $_POST['aup_pre'] == '' ? '0' : '1';
+		$append = isset($_POST['aup_app']) and $_POST['aup_app'] == '' ? '0' : '1';
 		
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
@@ -324,32 +407,48 @@ if(isset($_SESSION['username'])){
 				}
 				
 				if ($valid){
-					//Overwrite previously generated or assigned packets
-					updateIn('tossups', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
-					updateIn('bonuses', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+					if ($preserve == 0){ //Overwrite previously generated or assigned packets if user wants
+						updateIn('tossups', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+						updateIn('bonuses', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+					}
 					
 					//Get all of tournament's promoted questions
-					$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
-					$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
+					$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
+					$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 					
 					//Filter anything that has a malformed or invalid subject
+					//Optionally filter anything that is assigned if user wants
 					foreach ($tossupsSelect as $key => $entry){
 						if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
 							unset($tossupsSelect[$key]);
+							continue;
 						}
 						
 						if (!in_array($entry['psets_allocations_id'], $subjects)){
 							unset($tossupsSelect[$key]);
+							continue;
+						}
+						
+						if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
+							unset($tossupsSelect[$key]);
+							continue;
 						}
 					}
 					
 					foreach ($bonusesSelect as $key => $entry){
 						if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
 							unset($bonusesSelect[$key]);
+							continue;
 						}
 						
 						if (!in_array($entry['psets_allocations_id'], $subjects)){
 							unset($bonusesSelect[$key]);
+							continue;
+						}
+						
+						if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
+							unset($bonusesSelect[$key]);
+							continue;
 						}
 					}
 					
@@ -361,11 +460,20 @@ if(isset($_SESSION['username'])){
 					$currentSpot = 1; //Question Number
 					$total = array_sum($weights);
 					
+					if ($append == 0){ //Use new packets
+						$currentNum = nextOpenPacket();
+					}
+					
+					if ($preserve == 1){ //Preserve ordering
+						$currentSpot = nextOpenTossup($currentNum);
+					}
+					
 					$picksTU = $weights; //Weighted Arrays
 					$picksB = $weights; //For Bonuses Too
 					
 					$tossupCount = $tossupNum;
 					$bonusCount = $bonusNum;
+					$usedPackets = array();
 					
 					while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
 						$found = false;
@@ -412,9 +520,20 @@ if(isset($_SESSION['username'])){
 									$tossupCount = $tossupNum;
 								}
 								
+								//Add packet to list of used packets
+								$usedPackets[] = $currentNum;
+								
 								$packetNum = $packetNum - 1;
 								$currentNum = $currentNum + 1;
 								$currentSpot = 1;
+								
+								if ($append == 0){ //Use new packets
+									$currentNum = nextOpenPacket();
+								}
+							}
+															
+							if ($preserve == 1){ //Preserve ordering
+								$currentSpot = nextOpenTossup($currentNum);
 							}
 						}
 					}
@@ -423,7 +542,22 @@ if(isset($_SESSION['username'])){
 					$errorTossups = $tossupCount;
 					
 					$currentNum = 1;
+					$currentSpot = 1;
 					$packetNum = $savedNum;
+					
+					if ($append == 0){ //Use new packets from tossups
+						if (count($usedPackets) > 0){
+							$currentNum = array_shift($usedPackets);
+						}
+						
+						else{
+							$currentNum = nextOpenPacket();
+						}
+					}
+					
+					if ($preserve == 1){ //Preserve ordering
+						$currentSpot = nextOpenTossup($currentNum);
+					}
 					
 					while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
 						$found = false;
@@ -473,6 +607,20 @@ if(isset($_SESSION['username'])){
 								$packetNum = $packetNum - 1;
 								$currentNum = $currentNum + 1;
 								$currentSpot = 1;
+								
+								if ($append == 0){ //Use new packets from tossups
+									if (count($usedPackets) > 0){
+										$currentNum = array_shift($usedPackets);
+									}
+									
+									else{
+										$currentNum = nextOpenPacket();
+									}
+								}
+							}
+							
+							if ($preserve == 1){ //Preserve ordering
+								$currentSpot = nextOpenTossup($currentNum);
 							}
 						}
 					}
@@ -486,7 +634,7 @@ if(isset($_SESSION['username'])){
 					if ($problems > 0){
 						?>
 							<div class="message error-message" onclick="go_packets();">
-								<p><strong>Your packets could only be partially generated. (Click to refresh.)<? print($errorPacketsTU); ?></strong></p>
+								<p><strong>Your packets could only be partially generated. (Click to refresh.)</strong></p>
 							</div>
 						<?
 					}

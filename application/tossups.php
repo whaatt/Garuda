@@ -148,9 +148,9 @@ if(isset($_SESSION['username'])){
 					updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup in database
 				}
 				
-				else{//Subject NULL in DB
-					$columns = array('psets_allocations_id', 'tossup', 'answer', 'editor_users_id');
-					$values = array("NULL", "'" . sanitize(trim($question), false, '<b><i>') . "'", "'" . sanitize(trim($answer), false, '<b><i><u>') . "'", "'" . $userID . "'");
+				else{//Subject NULL in DB - why oh why did I do this...btw de-assign from packets
+					$columns = array('psets_allocations_id', 'tossup', 'answer', 'editor_users_id', 'round_id', 'round_num');
+					$values = array("NULL", "'" . sanitize(trim($question), false, '<b><i>') . "'", "'" . sanitize(trim($answer), false, '<b><i><u>') . "'", "'" . $userID . "'", "''", "''");
 					updateIn('tossups', $columns, $values, array('id'), array("'" . $id . "'"));//Update tossup in database
 				}
 			

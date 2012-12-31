@@ -124,7 +124,8 @@ if(isset($_SESSION['username'])){
 				case 'm': $members[count($members)-1][2] = 'Manager'; break;
 			}
 			
-			if ($perm['psets_allocations_id'] != ''){
+			if ($perm['psets_allocations_id'] != ''){ //This works only because it is a loose comparison.
+			//Sometime I'll get around to making everything non-NULL throughout the program
 				$topics = explode(',', $perm['psets_allocations_id']);
 				
 				if (count($topics) > 1){
