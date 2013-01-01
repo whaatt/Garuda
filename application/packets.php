@@ -407,242 +407,252 @@ if(isset($_SESSION['username'])){
 				}
 				
 				if ($valid){
-					if ($preserve == 0){ //Overwrite previously generated or assigned packets if user wants
-						updateIn('tossups', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
-						updateIn('bonuses', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
-					}
-					
-					//Get all of tournament's promoted questions
-					$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
-					$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
-					
-					//Filter anything that has a malformed or invalid subject
-					//Optionally filter anything that is assigned if user wants
-					foreach ($tossupsSelect as $key => $entry){
-						if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
-							unset($tossupsSelect[$key]);
-							continue;
+					if ($packetNum < 51 and $tossupNum < 51 and $bonusNum < 51){
+						if ($preserve == 0){ //Overwrite previously generated or assigned packets if user wants
+							updateIn('tossups', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
+							updateIn('bonuses', array('round_id', 'round_num'), array("''", "''"), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
 						}
 						
-						if (!in_array($entry['psets_allocations_id'], $subjects)){
-							unset($tossupsSelect[$key]);
-							continue;
-						}
+						//Get all of tournament's promoted questions
+						$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
+						$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						
-						if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
-							unset($tossupsSelect[$key]);
-							continue;
-						}
-					}
-					
-					foreach ($bonusesSelect as $key => $entry){
-						if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
-							unset($bonusesSelect[$key]);
-							continue;
-						}
-						
-						if (!in_array($entry['psets_allocations_id'], $subjects)){
-							unset($bonusesSelect[$key]);
-							continue;
-						}
-						
-						if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
-							unset($bonusesSelect[$key]);
-							continue;
-						}
-					}
-					
-					//For randomness, shuffle selection
-					$tossupsSelect = shuffle_assoc($tossupsSelect);
-					$bonusesSelect = shuffle_assoc($bonusesSelect);
-					
-					$currentNum = 1; //Packet Number
-					$currentSpot = 1; //Question Number
-					$total = array_sum($weights);
-					
-					if ($append == 0){ //Use new packets
-						$currentNum = nextOpenPacket();
-					}
-					
-					if ($preserve == 1){ //Preserve ordering
-						$currentSpot = nextOpenTossup($currentNum);
-					}
-					
-					$picksTU = $weights; //Weighted Arrays
-					$picksB = $weights; //For Bonuses Too
-					
-					$tossupCount = $tossupNum;
-					$bonusCount = $bonusNum;
-					$usedPackets = array();
-					
-					while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
-						$found = false;
-						
-						while ($found == false and count($picksTU) > 0){ //Second condition should be unnecessary
-							$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
-							
-							foreach ($picksTU as $index => $value){ //Get Random Topic
-								$alpha = $alpha - $value;
-								
-								if ($alpha < 0){
-									$type = $index; //$subjects index
-									break;
-								}
+						//Filter anything that has a malformed or invalid subject
+						//Optionally filter anything that is assigned if user wants
+						foreach ($tossupsSelect as $key => $entry){
+							if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
+								unset($tossupsSelect[$key]);
+								continue;
 							}
 							
-							foreach ($tossupsSelect as $key => $entry){
-								if ($entry['psets_allocations_id'] == $subjects[$type]){
-									updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
-								
-									$delete = $key;
-									$found = true;
-									
-									break;
-								}
+							if (!in_array($entry['psets_allocations_id'], $subjects)){
+								unset($tossupsSelect[$key]);
+								continue;
 							}
 							
-							if ($found != true){ //Delete Topic
-								unset($picksTU[$type]);
-							}
-							
-							else{
-								unset($tossupsSelect[$delete]);
+							if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
+								unset($tossupsSelect[$key]);
+								continue;
 							}
 						}
 						
-						//Update Packet and Question Numbers
-						if ($found == true){
-							$tossupCount = $tossupCount - 1;
-							$currentSpot = $currentSpot + 1;
+						foreach ($bonusesSelect as $key => $entry){
+							if (!isset($entry['psets_allocations_id']) or $entry['psets_allocations_id'] == ''){
+								unset($bonusesSelect[$key]);
+								continue;
+							}
 							
-							if ($tossupCount == 0){
-								if ($packetNum > 1){
-									$tossupCount = $tossupNum;
-								}
-								
-								//Add packet to list of used packets
-								$usedPackets[] = $currentNum;
-								
-								$packetNum = $packetNum - 1;
-								$currentNum = $currentNum + 1;
-								$currentSpot = 1;
-								
-								if ($append == 0){ //Use new packets
-									$currentNum = nextOpenPacket();
-								}
+							if (!in_array($entry['psets_allocations_id'], $subjects)){
+								unset($bonusesSelect[$key]);
+								continue;
 							}
-															
-							if ($preserve == 1){ //Preserve ordering
-								$currentSpot = nextOpenTossup($currentNum);
+							
+							if (isset($entry['round_id']) and $entry['round_id'] != '' and $preserve == 1){
+								unset($bonusesSelect[$key]);
+								continue;
 							}
-						}
-					}
-					
-					$errorPacketsTU = ($tossupNum == 0) ? 0 : $packetNum; //Packet = 0
-					$errorTossups = $tossupCount;
-					
-					$currentNum = 1;
-					$currentSpot = 1;
-					$packetNum = $savedNum;
-					
-					if ($append == 0){ //Use new packets from tossups
-						if (count($usedPackets) > 0){
-							$currentNum = array_shift($usedPackets);
 						}
 						
-						else{
+						//For randomness, shuffle selection
+						$tossupsSelect = shuffle_assoc($tossupsSelect);
+						$bonusesSelect = shuffle_assoc($bonusesSelect);
+						
+						$currentNum = 1; //Packet Number
+						$currentSpot = 1; //Question Number
+						$total = array_sum($weights);
+						
+						if ($append == 0){ //Use new packets
 							$currentNum = nextOpenPacket();
 						}
-					}
-					
-					if ($preserve == 1){ //Preserve ordering
-						$currentSpot = nextOpenTossup($currentNum);
-					}
-					
-					while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
-						$found = false;
 						
-						while ($found == false and count($picksB) > 0){
-							$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
-							
-							foreach ($picksB as $index => $value){ //Get Random Topic
-								$alpha = $alpha - $value;
-								
-								if ($alpha < 0){
-									$type = $index; //$subjects index
-									break;
-								}
-							}
-							
-							foreach ($bonusesSelect as $key => $entry){
-								if ($entry['psets_allocations_id'] == $subjects[$type]){
-									updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
-								
-									$delete = $key;
-									$found = true;
-									
-									break;
-								}
-							}
-							
-							if ($found != true){ //Delete Topic
-								unset($picksB[$type]);
-							}
-							
-							else{
-								unset($bonusesSelect[$delete]);
-							}
+						if ($preserve == 1){ //Preserve ordering
+							$currentSpot = nextOpenTossup($currentNum);
 						}
 						
-						//Update Packet and Question Numbers
-						if ($found == true){
-							$bonusCount = $bonusCount - 1;
-							$currentSpot = $currentSpot + 1;
+						$picksTU = $weights; //Weighted Arrays
+						$picksB = $weights; //For Bonuses Too
+						
+						$tossupCount = $tossupNum;
+						$bonusCount = $bonusNum;
+						$usedPackets = array();
+						
+						while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
+							$found = false;
 							
-							if ($bonusCount == 0){
-								if ($packetNum > 1){
-									$bonusCount = $bonusNum;
+							while ($found == false and count($picksTU) > 0){ //Second condition should be unnecessary
+								$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
+								
+								foreach ($picksTU as $index => $value){ //Get Random Topic
+									$alpha = $alpha - $value;
+									
+									if ($alpha < 0){
+										$type = $index; //$subjects index
+										break;
+									}
 								}
 								
-								$packetNum = $packetNum - 1;
-								$currentNum = $currentNum + 1;
-								$currentSpot = 1;
+								foreach ($tossupsSelect as $key => $entry){
+									if ($entry['psets_allocations_id'] == $subjects[$type]){
+										updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
+									
+										$delete = $key;
+										$found = true;
+										
+										break;
+									}
+								}
 								
-								if ($append == 0){ //Use new packets from tossups
-									if (count($usedPackets) > 0){
-										$currentNum = array_shift($usedPackets);
+								if ($found != true){ //Delete Topic
+									unset($picksTU[$type]);
+								}
+								
+								else{
+									unset($tossupsSelect[$delete]);
+								}
+							}
+							
+							//Update Packet and Question Numbers
+							if ($found == true){
+								$tossupCount = $tossupCount - 1;
+								$currentSpot = $currentSpot + 1;
+								
+								if ($tossupCount == 0){
+									if ($packetNum > 1){
+										$tossupCount = $tossupNum;
 									}
 									
-									else{
+									//Add packet to list of used packets
+									$usedPackets[] = $currentNum;
+									
+									$packetNum = $packetNum - 1;
+									$currentNum = $currentNum + 1;
+									$currentSpot = 1;
+									
+									if ($append == 0){ //Use new packets
 										$currentNum = nextOpenPacket();
 									}
 								}
-							}
-							
-							if ($preserve == 1){ //Preserve ordering
-								$currentSpot = nextOpenTossup($currentNum);
+																
+								if ($preserve == 1){ //Preserve ordering
+									$currentSpot = nextOpenTossup($currentNum);
+								}
 							}
 						}
-					}
-					
-					$errorPacketsB = ($bonusNum == 0) ? 0 : $packetNum;
-					$errorBonuses = $bonusCount;
-					
-					//I got 99 problems but a lack of sufficient questions ain't one
-					$problems = $errorPacketsTU + $errorTossups + $errorPacketsB + $errorBonuses;
-					
-					if ($problems > 0){
-						?>
-							<div class="message error-message" onclick="go_packets();">
-								<p><strong>Your packets could only be partially generated. (Click to refresh.)</strong></p>
-							</div>
-						<?
+						
+						$errorPacketsTU = ($tossupNum == 0) ? 0 : $packetNum; //Packet = 0
+						$errorTossups = $tossupCount;
+						
+						$currentNum = 1;
+						$currentSpot = 1;
+						$packetNum = $savedNum;
+						
+						if ($append == 0){ //Use new packets from tossups
+							if (count($usedPackets) > 0){
+								$currentNum = array_shift($usedPackets);
+							}
+							
+							else{
+								$currentNum = nextOpenPacket();
+							}
+						}
+						
+						if ($preserve == 1){ //Preserve ordering
+							$currentSpot = nextOpenTossup($currentNum);
+						}
+						
+						while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
+							$found = false;
+							
+							while ($found == false and count($picksB) > 0){
+								$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
+								
+								foreach ($picksB as $index => $value){ //Get Random Topic
+									$alpha = $alpha - $value;
+									
+									if ($alpha < 0){
+										$type = $index; //$subjects index
+										break;
+									}
+								}
+								
+								foreach ($bonusesSelect as $key => $entry){
+									if ($entry['psets_allocations_id'] == $subjects[$type]){
+										updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
+									
+										$delete = $key;
+										$found = true;
+										
+										break;
+									}
+								}
+								
+								if ($found != true){ //Delete Topic
+									unset($picksB[$type]);
+								}
+								
+								else{
+									unset($bonusesSelect[$delete]);
+								}
+							}
+							
+							//Update Packet and Question Numbers
+							if ($found == true){
+								$bonusCount = $bonusCount - 1;
+								$currentSpot = $currentSpot + 1;
+								
+								if ($bonusCount == 0){
+									if ($packetNum > 1){
+										$bonusCount = $bonusNum;
+									}
+									
+									$packetNum = $packetNum - 1;
+									$currentNum = $currentNum + 1;
+									$currentSpot = 1;
+									
+									if ($append == 0){ //Use new packets from tossups
+										if (count($usedPackets) > 0){
+											$currentNum = array_shift($usedPackets);
+										}
+										
+										else{
+											$currentNum = nextOpenPacket();
+										}
+									}
+								}
+								
+								if ($preserve == 1){ //Preserve ordering
+									$currentSpot = nextOpenTossup($currentNum);
+								}
+							}
+						}
+						
+						$errorPacketsB = ($bonusNum == 0) ? 0 : $packetNum;
+						$errorBonuses = $bonusCount;
+						
+						//I got 99 problems but a lack of sufficient questions ain't one
+						$problems = $errorPacketsTU + $errorTossups + $errorPacketsB + $errorBonuses;
+						
+						if ($problems > 0){
+							?>
+								<div class="message error-message" onclick="go_packets();">
+									<p><strong>Your packets could only be partially generated. (Click to refresh.)</strong></p>
+								</div>
+							<?
+						}
+						
+						else{
+							?>
+								<div class="message thank-message" onclick="go_packets();">
+									<p><strong>Your packets were successfully generated. (Click to refresh.)</strong></p>
+								</div>
+							<?
+						}
 					}
 					
 					else{
 						?>
-							<div class="message thank-message" onclick="go_packets();">
-								<p><strong>Your packets were successfully generated. (Click to refresh.)</strong></p>
+							<div class="message error-message" onclick="cont_remove(this, 1);">
+								<p><strong>Your input values cannot be above fifty. (Click to hide.)</strong></p>
 							</div>
 						<?
 					}
