@@ -9,6 +9,7 @@ $conf['site'] = "http://www.skalon.com"; //Developer Site
 $conf['help'] = "http://www.skalon.com/contact/help"; //Help Site
 $conf['contact'] = "http://www.skalon.com/contact/garuda"; //Contact Site
 $conf['play'] = "http://www.skalon.com/qub"; //Play Site
+$conf['tracking'] = "UA-XXXXXX-Y"; //Google Analytics Tracking Code
 
 /* Resource Properties */
 
