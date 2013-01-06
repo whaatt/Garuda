@@ -1,18 +1,22 @@
 <?php
 
-/* MySQL Query Handler */
+/* MYSQL Query Handler */
 
 function sanitize($value, $noEntity = true, $noStrip = ''){//Defend Against Injections
+	global $connection;
+	
 	if ($noEntity){
-		return mysql_real_escape_string(htmlentities(stripslashes($value)));
+		return mysqli_real_escape_string($connection, htmlentities(stripslashes($value)));
 	}
 	
 	else{
-		return mysql_real_escape_string(strip_tags(stripslashes($value), $noStrip));
+		return mysqli_real_escape_string($connection, strip_tags(stripslashes($value), $noStrip));
 	}
 }
 
-function getNumOf($table,$columns,$items){//Get Number Of Instances In Database
+function getNumOf($table, $columns, $items){//Get Number Of Instances In Database
+	global $connection;
+	
 	$query = "SELECT * FROM `$table` WHERE ";
 	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
 	
@@ -20,11 +24,13 @@ function getNumOf($table,$columns,$items){//Get Number Of Instances In Database
 		$query = $query . " AND " . "`" . $columns[$i] . "`" . "=" . $items[$i];
 	}
 
-	$duplicates = mysql_query($query) or die(mysql_error());
-	return mysql_num_rows($duplicates);
+	$duplicates = mysqli_query($connection, $query) or die(mysqli_error($connection));
+	return mysqli_num_rows($duplicates);
 }
 
-function insertInto($table,$columns,$items){//Insert Items Into Database
+function insertInto($table, $columns, $items){//Insert Items Into Database
+	global $connection;
+	
 	$query = "INSERT INTO `$table` (";//Build Query String
 	$query = $query . "`" . $columns[0] . "`";
 
@@ -41,13 +47,15 @@ function insertInto($table,$columns,$items){//Insert Items Into Database
 	
 	$query = $query . ")";
 	
-	mysql_query($query) or die(mysql_error());
+	mysqli_query($connection, $query) or die(mysqli_error($connection));
 	return true;
 }
 
 //Precondition: $values are valid and $columns correspond one-to-one with $items
 //Precondition: $columns and $items are non-empty
-function selectFrom($table,$values,$columns,$items){//Make A Database Selection
+function selectFrom($table, $values, $columns, $items){//Make A Database Selection
+	global $connection;
+	
 	$query = "SELECT * FROM `$table`";
 	
 	if (count($columns) > 0){
@@ -58,10 +66,10 @@ function selectFrom($table,$values,$columns,$items){//Make A Database Selection
 		}
 	}
 	
-	$selection = mysql_query($query) or die(mysql_error());
+	$selection = mysqli_query($connection, $query) or die(mysqli_error($connection));
 	$return = array();
 	
-	while ($row = mysql_fetch_assoc($selection)){
+	while ($row = mysqli_fetch_assoc($selection)){
 		array_push($return, $row);
 		foreach ($return[count($return)-1] as $key => $value){
 			if (in_array($key, $values) == False){
@@ -75,7 +83,9 @@ function selectFrom($table,$values,$columns,$items){//Make A Database Selection
 
 //Precondition: $values are valid and $columns correspond one-to-one with $items
 //Precondition: $conditions and $values are non-empty
-function updateIn($table,$columns,$items,$conditions,$values){//Update Rows In Database
+function updateIn($table, $columns, $items, $conditions, $values){//Update Rows In Database
+	global $connection;
+	
 	$query = "UPDATE `$table` SET ";//Build Query String
 	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
 
@@ -90,11 +100,13 @@ function updateIn($table,$columns,$items,$conditions,$values){//Update Rows In D
 		$query = $query . " AND " . "`" . $conditions[$i] . "`" . "=" . $values[$i];
 	}
 	
-	mysql_query($query) or die(mysql_error());
+	mysqli_query($connection, $query) or die(mysqli_error($connection));
 	return true;
 }
 
-function deleteFrom($table,$columns,$items){//Delete certain items from database
+function deleteFrom($table, $columns, $items){//Delete certain items from database
+	global $connection;
+	
 	$query = "DELETE FROM `$table` WHERE ";
 	$query = $query . "`" . $columns[0] . "`" . "=" . $items[0];
 	
@@ -102,7 +114,7 @@ function deleteFrom($table,$columns,$items){//Delete certain items from database
 		$query = $query . " AND " . "`" . $columns[$i] . "`" . "=" . $items[$i];
 	}
 
-	mysql_query($query) or die(mysql_error());
+	mysqli_query($connection, $query) or die(mysqli_error($connection));
 	return true;
 }
 

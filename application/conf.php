@@ -37,8 +37,7 @@ $conf['db_pass'] = "<censored>"; //Database Password
 
 /* Database Connection */
 
-mysql_connect("localhost", $conf['db_user'], $conf['db_pass']) or die(mysql_error()); //Connect
-mysql_select_db($conf['db_name']) or die(mysql_error()); //Select
+$connection = mysqli_connect("localhost", $conf['db_user'], $conf['db_pass'], $conf['db_name']) or die('MYSQL Connection Error'); //Connect
 
 /* Start Session */
 
