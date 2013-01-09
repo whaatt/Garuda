@@ -115,7 +115,11 @@ if(isset($_SESSION['username'])){
 			$columns = array('name', 'username');
 			$userSelect = selectFrom('users', $columns, array('id'), array("'" . sanitize($perm['users_id']) . "'"));//Get tournaments.
 			
-			array_push($members, array(0 => $userSelect[0]['name'], 1 => $userSelect[0]['username'], 2 => '', 3 => '', 4 => 'Update User', 5 => $perm['users_id'], 6 => ''));
+			//Get tossup and bonus counts for user in tournament
+			$contribSelectTU = getNumOf('tossups', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
+			$contribSelectB = getNumOf('bonuses', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
+			
+			array_push($members, array(0 => $userSelect[0]['name'], 1 => $userSelect[0]['username'], 2 => '', 3 => '', 4 => strval($contribSelectTU), 5 => strval($contribSelectB), 6 => 'Update User', 7 => $perm['users_id'], 8 => ''));
 			
 			switch ($perm['role']){//Access Level
 				case 'd': $members[count($members)-1][2] = 'Director'; break;
@@ -138,7 +142,7 @@ if(isset($_SESSION['username'])){
 					}
 					
 					$multiple[strval(count($members)-1)] = rtrim($multiple[strval(count($members)-1)], '<br>');
-					$members[count($members)-1][6] = strval(count($members)-1);
+					$members[count($members)-1][8] = strval(count($members)-1);
 				}
 				
 				else{
@@ -160,6 +164,8 @@ if(isset($_SESSION['username'])){
 					<th>Username</th>
 					<th>Access Level</th>
 					<th>Subject Focus</th>
+					<th>Tossups</th>
+					<th>Bonuses</th>
 					<th>Modify Membership</th>
 				</tr>
 			</thead>
@@ -182,15 +188,15 @@ if(isset($_SESSION['username'])){
 				}
 				
 				foreach ($member as $key => $parameter){
-					if ($key == 4){
-						echo '<td><a onclick="modal_member(' . $member[5] . '); return false;">' . $parameter . '</a></td>';
+					if ($key == 6){
+						echo '<td><a onclick="modal_member(' . $member[7] . '); return false;">' . $parameter . '</a></td>';
 					}
 					
 					else if ($key == 3){
-						echo '<td><span id="' . $member[6] . '">' . $parameter . '</span></td>';
+						echo '<td><span id="' . $member[8] . '">' . $parameter . '</span></td>';
 					}
 					
-					else if ($key != 5 and $key != 6){
+					else if ($key != 7 and $key != 8){
 						echo '<td>' . $parameter . '</td>';
 					}
 				}
