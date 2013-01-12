@@ -9,30 +9,30 @@ function po(params,values){ret="<form>";for(var i=0;i<params.length;i++){ret+="<
 
 //Links
 
-function go_register(){message('register.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Register'])]);});}
-function go_login(){message('login.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Login'])]);});}
-function go_welcome(fade){fade = typeof fade !== 'undefined' ? fade : 0; message('welcome.php','content',0,0,1,[], function(){message('menu.php','navigation',0,0,fade,[po(['link'],['Welcome'])]);});}
+function go_register(){message('register.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Register'])]);});}
+function go_login(){message('login.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Login'])]);});}
+function go_welcome(){message('welcome.php','content',0,0,0,[], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Welcome'])]);});}
 
-function go_dashboard(fade){fade = typeof fade !== 'undefined' ? fade : 0; message('dashboard.php','content',0,0,1,[], function(){message('menu.php','navigation',0,0,fade,[po(['link'],['Dashboard'])]);});}
-function go_create(){message('create.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);});}
-function go_join(){message('join.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);});}
-function go_account(){message('account.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);});}
+function go_dashboard(){message('dashboard.php','content',0,0,0,[], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Dashboard'])]);});}
+function go_create(){message('create.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);});}
+function go_join(){message('join.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);});}
+function go_account(){message('account.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);});}
 function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]);}
 
-function go_tournament(){message('tournament.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
-function go_members(){message('members.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);});}
-function go_tossups(){message('tossups.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);});}
-function go_bonuses(){message('bonuses.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);});}
-function go_packets(){message('packets.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);});}
+function go_tournament(){message('tournament.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
+function go_members(){message('members.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);});}
+function go_tossups(){message('tossups.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);});}
+function go_bonuses(){message('bonuses.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);});}
+function go_packets(){message('packets.php','content',0,0,0,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);});}
 function go_leave(){message('leave.php','content',0,1,1,[po(['really'],['0'])]);}
 
 //Continuations
 
-function cont_dashboard(){go_dashboard(1); message('greeting.php','greeting',0,0,0,[]);}
-function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])], function(){message('greeting.php','greeting',0,0,0,[], function(){go_welcome(1);});});}
+function cont_dashboard(){go_dashboard(); message('greeting.php','greeting',0,0,0,[]);}
+function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])], function(){message('greeting.php','greeting',0,0,0,[], function(){go_welcome();});});}
 function cont_remove(obj,fade){if(fade==1){$(obj).fadeOut();}else{$(obj).hide();}}
-function cont_tournament(id){message('tournament.php','content',0,0,1,[po(['tou_id','submit'],[id,'0'])], function(){message('menu.php','navigation',0,0,1,[po(['link'],['Tournament'])]);});}
-function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])], function(){go_dashboard(1);});}
+function cont_tournament(id){message('tournament.php','content',0,0,0,[po(['tou_id','submit'],[id,'0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
+function cont_leave(){message('leave.php','',0,0,0,[po(['really'],['1'])], function(){go_dashboard();});}
 function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],[type, id])], function(){if (type=='set'){cont_leave();} else if (type=='member'){go_members();} else if (type=='tossup'){go_tossups();} else if (type=='bonus'){go_bonuses();}})}
 
 //Submissions
@@ -64,7 +64,7 @@ function submit_packets_auto(obj){message('packets.php','content',0,1,1,[po(['su
 //Initializers
 
 function init_menu(){message('menu.php','navigation',0,0,0,[]);}
-function init_content(){message('content.php','content',0,0,1,[]);}
+function init_content(){message('content.php','content',0,0,0,[]);}
 function init_greeting(){message('greeting.php','greeting',0,0,0,[]);}
 function init_all(){init_menu(); init_content(); init_greeting();}
 
