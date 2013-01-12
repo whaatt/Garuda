@@ -5,6 +5,7 @@
 /* Site Properties */
 
 $conf['name'] = "Garuda"; //Site Name
+$conf['path'] = "/garuda/"; //Path To Installation
 $conf['site'] = "http://www.skalon.com"; //Developer Site
 $conf['help'] = "http://www.skalon.com/contact/help"; //Help Site
 $conf['contact'] = "http://www.skalon.com/contact/garuda"; //Contact Site
@@ -42,7 +43,7 @@ $connection = mysqli_connect("localhost", $conf['db_user'], $conf['db_pass'], $c
 
 /* Start Session */
 
-session_start();
+session_set_cookie_params(0, $conf['path']); session_start();
 if (!isset($_SESSION['context'])){$_SESSION['context'] = 'main';}
 
 /* Static Text */
