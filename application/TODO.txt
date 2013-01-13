@@ -20,5 +20,5 @@ This was originally published in Markdown, but for some reason it's messing up i
 	- A lot of the decision was motivated by the shiny front-end stuff that is not straightforward.
 
 * My code is commented, though not nearly as much as I would have liked, since this is production code.
-* A writing statistics page is under consideration, but it might detract from a collaborative attitude.
+* A writing statistics page is under consideration. Scratch that, I just finished the statistics page.
 * In general, I don't like my messy coding, but I am relatively pleased with the functionality as it is.

@@ -16,6 +16,7 @@
 		<link rel="stylesheet" href="<? echo $conf['css_modal']; ?>" type="text/css" media="all" />
 		<link rel="stylesheet" href="<? echo $conf['css_ui']; ?>" type="text/css" media="all" />
 		
+		<script type="text/javascript" src="<? echo $conf['js_google']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_jQuery']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_scripts']; ?>"></script>
 		<script type="text/javascript" src="<? echo $conf['js_editor']; ?>"></script>

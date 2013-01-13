@@ -164,8 +164,8 @@ if(isset($_SESSION['username'])){
 					<th>Username</th>
 					<th>Access Level</th>
 					<th>Subject Focus</th>
-					<th>Tossups</th>
-					<th>Bonuses</th>
+					<!--<th>Tossups</th>
+					<th>Bonuses</th>-->
 					<th>Modify Membership</th>
 				</tr>
 			</thead>
@@ -196,7 +196,7 @@ if(isset($_SESSION['username'])){
 						echo '<td><span id="' . $member[8] . '">' . $parameter . '</span></td>';
 					}
 					
-					else if ($key != 7 and $key != 8){
+					else if ($key != 7 and $key != 8 and $key != 4 and $key != 5){//For the time being, hide stats on the members page (items 4, 5).
 						echo '<td>' . $parameter . '</td>';
 					}
 				}

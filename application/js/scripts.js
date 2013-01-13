@@ -21,6 +21,7 @@ function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]
 
 function go_tournament(){message('tournament.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
 function go_members(){message('members.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);});}
+function go_stats(){message('stats.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Stats'])]);});}
 function go_tossups(){message('tossups.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);});}
 function go_bonuses(){message('bonuses.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);});}
 function go_packets(){message('packets.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);});}
