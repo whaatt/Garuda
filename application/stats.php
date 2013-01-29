@@ -13,8 +13,10 @@ if(isset($_SESSION['username'])){
 	$submit = $_POST['submit']; //Form Submit Boolean (0)
 	echo $conf['stats'];
 	
-	$members = array();
-	$subjects = array();
+	$membersApproved = array();
+	$membersAll = array();
+	$subjectsApproved = array();
+	$subjectsAll = array();
 	
 	$columns = array('users_id', 'psets_allocations_id'); //Get users
 	$permsSelect = selectFrom('permissions', $columns, array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));
@@ -28,10 +30,14 @@ if(isset($_SESSION['username'])){
 		$username = $userSelect[0]['username'];
 		
 		//Get tossup and bonus counts for user in tournament
-		$contribSelectTU = getNumOf('tossups', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
-		$contribSelectB = getNumOf('bonuses', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
+		$contribSelectApprovedTU = getNumOf('tossups', array('creator_users_id', 'psets_id', 'approved'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'", "'1'"));
+		$contribSelectApprovedB = getNumOf('bonuses', array('creator_users_id', 'psets_id', 'approved'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'", "'1'"));
 	
-		array_push($members, array('name' => $name, 'username' => $username, 'tossups' => $contribSelectTU, 'bonuses' => $contribSelectB));
+		$contribSelectAllTU = getNumOf('tossups', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
+		$contribSelectAllB = getNumOf('bonuses', array('creator_users_id', 'psets_id'), array("'" . sanitize($perm['users_id']) . "'", "'" . $_SESSION['tournament'] . "'"));
+	
+		array_push($membersApproved, array('name' => $name, 'username' => $username, 'tossups' => $contribSelectApprovedTU, 'bonuses' => $contribSelectApprovedB));
+		array_push($membersAll, array('name' => $name, 'username' => $username, 'tossups' => $contribSelectAllTU, 'bonuses' => $contribSelectAllB));
 	}
 	
 	$columns = array('id', 'subject'); //Get subjects -- ID and name -- by Tournament ID
@@ -41,16 +47,20 @@ if(isset($_SESSION['username'])){
 		$name = $subject['subject'];
 		$ID = $subject['id'];
 		
-		//Get tossup and bonus counts for subject in tournament
-		$countSelectTU = getNumOf('tossups', array('psets_allocations_id', 'psets_id'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'"));
-		$countSelectB = getNumOf('bonuses', array('psets_allocations_id', 'psets_id'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'"));
+		//Get tossup and bonus counts for subject in tournament - Approved then All
+		$countSelectApprovedTU = getNumOf('tossups', array('psets_allocations_id', 'psets_id', 'approved'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'", "'1'"));
+		$countSelectApprovedB = getNumOf('bonuses', array('psets_allocations_id', 'psets_id', 'approved'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'", "'1'"));
 	
-		array_push($subjects, array('name' => $name, 'tossups' => $countSelectTU, 'bonuses' => $countSelectB));
+		$countSelectAllTU = getNumOf('tossups', array('psets_allocations_id', 'psets_id'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'"));
+		$countSelectAllB = getNumOf('bonuses', array('psets_allocations_id', 'psets_id'), array("'" . sanitize($ID) . "'", "'" . $_SESSION['tournament'] . "'"));
+		
+		array_push($subjectsApproved, array('name' => $name, 'tossups' => $countSelectApprovedTU, 'bonuses' => $countSelectApprovedB));
+		array_push($subjectsAll, array('name' => $name, 'tossups' => $countSelectAllTU, 'bonuses' => $countSelectAllB));
 	}
 	
 	//Chart Boilerplate ?>
 	<script type="text/javascript">
-		function drawUserChart() {
+		function drawUserChartApproved() {
 			data = new google.visualization.DataTable();
 			data.addColumn('number', 'Tossups');
 			data.addColumn('number', 'Bonuses');
@@ -58,7 +68,7 @@ if(isset($_SESSION['username'])){
   
 			data.addRows([
 				<?
-					foreach ($members as $person){
+					foreach ($membersApproved as $person){
 						echo '[' . $person['tossups'] . ', ' . $person['bonuses'] . ", '" . 
 							$person['name'] . " - " . $person['tossups'] . ' Tossups, ' . $person['bonuses'] . " Bonuses'],";
 					}
@@ -66,18 +76,18 @@ if(isset($_SESSION['username'])){
 			]);
 
 			options = {
-				hAxis: {title: 'Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
-				vAxis: {title: 'Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				hAxis: {title: 'Approved Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				vAxis: {title: 'Approved Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
 				backgroundColor: { fill: 'transparent' },
-				colors: ['blue'],
+				colors: ['green'],
 				legend: 'none'
 			};
 
-			chart = new google.visualization.ScatterChart(document.getElementById('userplot'));
+			chart = new google.visualization.ScatterChart(document.getElementById('userplotapproved'));
 			chart.draw(data, options);
 		}
 		
-		function drawSubjectChart() {
+		function drawUserChartAll() {
 			data = new google.visualization.DataTable();
 			data.addColumn('number', 'Tossups');
 			data.addColumn('number', 'Bonuses');
@@ -85,7 +95,34 @@ if(isset($_SESSION['username'])){
   
 			data.addRows([
 				<?
-					foreach ($subjects as $item){
+					foreach ($membersAll as $person){
+						echo '[' . $person['tossups'] . ', ' . $person['bonuses'] . ", '" . 
+							$person['name'] . " - " . $person['tossups'] . ' Tossups, ' . $person['bonuses'] . " Bonuses'],";
+					}
+				?>
+			]);
+
+			options = {
+				hAxis: {title: 'All Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				vAxis: {title: 'All Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				backgroundColor: { fill: 'transparent' },
+				colors: ['blue'],
+				legend: 'none'
+			};
+
+			chart = new google.visualization.ScatterChart(document.getElementById('userplotall'));
+			chart.draw(data, options);
+		}
+		
+		function drawSubjectChartApproved() {
+			data = new google.visualization.DataTable();
+			data.addColumn('number', 'Tossups');
+			data.addColumn('number', 'Bonuses');
+			data.addColumn({type: 'string', role: 'tooltip'});
+  
+			data.addRows([
+				<?
+					foreach ($subjectsApproved as $item){
 						echo '[' . $item['tossups'] . ', ' . $item['bonuses'] . ", '" . 
 							$item['name'] . " - " . $item['tossups'] . ' Tossups, ' . $item['bonuses'] . " Bonuses'],";
 					}
@@ -93,24 +130,56 @@ if(isset($_SESSION['username'])){
 			]);
 
 			options = {
-				hAxis: {title: 'Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
-				vAxis: {title: 'Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				hAxis: {title: 'Approved Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				vAxis: {title: 'Approved Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				backgroundColor: { fill: 'transparent' },
+				colors: ['orange'],
+				legend: 'none'
+			};
+
+			chart = new google.visualization.ScatterChart(document.getElementById('subjectplotapproved'));
+			chart.draw(data, options);
+		}
+		
+		function drawSubjectChartAll() {
+			data = new google.visualization.DataTable();
+			data.addColumn('number', 'All Tossups');
+			data.addColumn('number', 'All Bonuses');
+			data.addColumn({type: 'string', role: 'tooltip'});
+  
+			data.addRows([
+				<?
+					foreach ($subjectsAll as $item){
+						echo '[' . $item['tossups'] . ', ' . $item['bonuses'] . ", '" . 
+							$item['name'] . " - " . $item['tossups'] . ' Tossups, ' . $item['bonuses'] . " Bonuses'],";
+					}
+				?>
+			]);
+
+			options = {
+				hAxis: {title: 'All Tossups', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
+				vAxis: {title: 'All Bonuses', minValue: 0, maxValue: 15, titleTextStyle: {italic: false}},
 				backgroundColor: { fill: 'transparent' },
 				colors: ['red'],
 				legend: 'none'
 			};
 
-			chart = new google.visualization.ScatterChart(document.getElementById('subjectplot'));
+			chart = new google.visualization.ScatterChart(document.getElementById('subjectplotall'));
 			chart.draw(data, options);
 		}
 		
-		drawUserChart();
-		drawSubjectChart();
+		drawUserChartApproved();
+		drawUserChartAll();
+		drawSubjectChartApproved();
+		drawSubjectChartAll();
 	</script>
     
 	<div style="width: 100%; text-align: center; font-size: 0;">
-		<div id="userplot" style="display: inline-block; width: 47%;"></div>
-		<div id="subjectplot" style="display: inline-block; width: 47%;"></div>
+		<div id="userplotapproved" style="display: inline-block; width: 47%;"></div>
+		<div id="subjectplotapproved" style="display: inline-block; width: 47%;"></div>
+		<br><br>
+		<div id="userplotall" style="display: inline-block; width: 47%;"></div>
+		<div id="subjectplotall" style="display: inline-block; width: 47%;"></div>
 	</div>
 	<? //End Chart Boilerplate
 }
