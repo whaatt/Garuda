@@ -87,10 +87,10 @@ function shuffle_assoc($list) {
 	$random = array(); 
 	
 	foreach ($keys as $key) { 
-		$random[] = $list[$key]; 
+		$random[$key] = $list[$key]; 
 	}
 	
-	return $random; 
+	return $random;
 } 
 
 function logIt($input){
@@ -457,9 +457,14 @@ if(isset($_SESSION['username'])){
 						$tossupsSelect = shuffle_assoc($tossupsSelect);
 						$bonusesSelect = shuffle_assoc($bonusesSelect);
 						
+						$initialTossups = count($tossupsSelect);
+						$initialBonuses = count($bonusesSelect);
+						
+						$assignedTossups = 0;
+						$assignedBonuses = 0;
+						
 						$currentNum = 1; //Packet Number
 						$currentSpot = 1; //Question Number
-						$total = array_sum($weights);
 						
 						if ($append == 0){ //Use new packets
 							$currentNum = nextOpenPacket();
@@ -480,17 +485,23 @@ if(isset($_SESSION['username'])){
 							$found = false;
 							
 							while ($found == false and count($picksTU) > 0){ //Second condition should be unnecessary
-								$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
-								
-								foreach ($picksTU as $index => $value){ //Get Random Topic
-									$alpha = $alpha - $value;
+								if ($assignedTossups < 0.80 * $initialTossups){
+									$alpha = mt_rand(0, array_sum($picksTU) - 1); //Get Selector, using Twister
 									
-									if ($alpha < 0){
-										$type = $index; //$subjects index
-										break;
+									foreach ($picksTU as $index => $value){ //Get Random Topic
+										$alpha = $alpha - $value;
+										
+										if ($alpha < 0){
+											$type = $index; //$subjects index
+											break;
+										}
 									}
 								}
 								
+								else{ //If more than 0.80 of Tossups are used, go to pure randomness.
+									$type = array_rand($picksTU);
+								}
+									
 								foreach ($tossupsSelect as $key => $entry){
 									if ($entry['psets_allocations_id'] == $subjects[$type]){
 										updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
@@ -514,6 +525,7 @@ if(isset($_SESSION['username'])){
 							//Update Packet and Question Numbers
 							if ($found == true){
 								$tossupCount = $tossupCount - 1;
+								$assignedTossups = $assignedTossups + 1;
 								$currentSpot = $currentSpot + 1;
 								
 								if ($tossupCount == 0){
@@ -557,22 +569,28 @@ if(isset($_SESSION['username'])){
 						}
 						
 						if ($preserve == 1){ //Preserve ordering
-							$currentSpot = nextOpenTossup($currentNum);
+							$currentSpot = nextOpenBonus($currentNum);
 						}
 						
 						while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
 							$found = false;
 							
 							while ($found == false and count($picksB) > 0){
-								$alpha = mt_rand(0, $total - 1); //Get Selector, using Twister
-								
-								foreach ($picksB as $index => $value){ //Get Random Topic
-									$alpha = $alpha - $value;
+								if ($assignedBonuses < 0.80 * $initialBonuses){									
+									$alpha = mt_rand(0, array_sum($picksB) - 1); //Get Selector, using Twister
 									
-									if ($alpha < 0){
-										$type = $index; //$subjects index
-										break;
+									foreach ($picksB as $index => $value){ //Get Random Topic
+										$alpha = $alpha - $value;
+										
+										if ($alpha < 0){
+											$type = $index; //$subjects index
+											break;
+										}
 									}
+								}
+								
+								else{ //If more than 0.80 of Bonuses are used, go to pure randomness.
+									$type = array_rand($picksB);
 								}
 								
 								foreach ($bonusesSelect as $key => $entry){
@@ -598,6 +616,7 @@ if(isset($_SESSION['username'])){
 							//Update Packet and Question Numbers
 							if ($found == true){
 								$bonusCount = $bonusCount - 1;
+								$assignedBonuses = $assignedBonuses + 1;
 								$currentSpot = $currentSpot + 1;
 								
 								if ($bonusCount == 0){
@@ -621,7 +640,7 @@ if(isset($_SESSION['username'])){
 								}
 								
 								if ($preserve == 1){ //Preserve ordering
-									$currentSpot = nextOpenTossup($currentNum);
+									$currentSpot = nextOpenBonus($currentNum);
 								}
 							}
 						}
