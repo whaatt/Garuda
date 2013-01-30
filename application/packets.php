@@ -77,22 +77,6 @@ function nextOpenBonus($packet){
 	}
 }
 
-function shuffle_assoc($list) { 
-	if (!is_array($list)){
-		return $list; 
-	}
-	
-	$keys = array_keys($list); 
-	shuffle($keys); 
-	$random = array(); 
-	
-	foreach ($keys as $key) { 
-		$random[$key] = $list[$key]; 
-	}
-	
-	return $random;
-} 
-
 function logIt($input){
 	error_log($input, 3, "log.txt");
 }
@@ -453,15 +437,84 @@ if(isset($_SESSION['username'])){
 							}
 						}
 						
-						//For randomness, shuffle selection
-						$tossupsSelect = shuffle_assoc($tossupsSelect);
-						$bonusesSelect = shuffle_assoc($bonusesSelect);
+						$picksTU = $weights; //Weighted Arrays
+						$picksB = $weights; //For Bonuses Too
 						
-						$initialTossups = count($tossupsSelect);
-						$initialBonuses = count($bonusesSelect);
+						$weightSum = array_sum($weights);
 						
-						$assignedTossups = 0;
-						$assignedBonuses = 0;
+						//Get total numbers of questions
+						$totalTU = $tossupNum * $packetNum;
+						$totalB = $bonusNum * $packetNum;
+						
+						//Get absolute numbers of weights
+						foreach ($picksTU as $key => $value){
+							$picksTU[$key] = floor(($value / $weightSum) * $totalTU);
+						}
+						
+						foreach ($picksB as $key => $value){
+							$picksB[$key] = floor(($value / $weightSum) * $totalB);
+						}
+						
+						//Filter question set to match weights
+						$toDeleteTU = array();
+						$toDeleteB = array();
+						
+						$availableTU = 0;
+						$availableB = 0;
+						
+						foreach ($tossupsSelect as $key => $tossup){
+							if ($picksTU[array_search($tossup['psets_allocations_id'], $subjects)] > 0){
+								$picksTU[array_search($tossup['psets_allocations_id'], $subjects)]--;
+								$availableTU++;
+							}
+							
+							else{
+								array_push($toDeleteTU, $key);
+							}
+						}
+						
+						foreach ($bonusesSelect as $key => $bonus){
+							if ($picksB[array_search($bonus['psets_allocations_id'], $subjects)] > 0){
+								$picksB[array_search($bonus['psets_allocations_id'], $subjects)]--;
+								$availableB++;
+							}
+							
+							else{
+								array_push($toDeleteB, $key);
+							}
+						}
+						
+						//Add what's left over to fill out a set
+						//Delete the rest!!
+						
+						shuffle($toDeleteTU);
+						shuffle($toDeleteB);
+						
+						foreach ($toDeleteTU as $key => $TUID){
+							if ($availableTU >= $totalTU){
+								unset($tossupsSelect[$TUID]);
+							}
+							
+							else{
+								$availableTU++;
+							}
+						}
+						
+						foreach ($toDeleteB as $key => $BID){
+							if ($availableB >= $totalB){
+								unset($bonusesSelect[$BID]);
+							}
+							
+							else{
+								$availableB++;
+							}
+						}
+						
+						shuffle($tossupsSelect);
+						shuffle($bonusesSelect);
+						
+						//Randomly select questions
+						//Add to packets
 						
 						$currentNum = 1; //Packet Number
 						$currentSpot = 1; //Question Number
@@ -474,81 +527,48 @@ if(isset($_SESSION['username'])){
 							$currentSpot = nextOpenTossup($currentNum);
 						}
 						
-						$picksTU = $weights; //Weighted Arrays
-						$picksB = $weights; //For Bonuses Too
-						
 						$tossupCount = $tossupNum;
 						$bonusCount = $bonusNum;
 						$usedPackets = array();
 						
 						while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
-							$found = false;
+							$randomIndex = array_rand($tossupsSelect);
+							$currentTossup = $tossupsSelect[$randomIndex];
 							
-							while ($found == false and count($picksTU) > 0){ //Second condition should be unnecessary
-								if ($assignedTossups < 0.80 * $initialTossups){
-									$alpha = mt_rand(0, array_sum($picksTU) - 1); //Get Selector, using Twister
-									
-									foreach ($picksTU as $index => $value){ //Get Random Topic
-										$alpha = $alpha - $value;
-										
-										if ($alpha < 0){
-											$type = $index; //$subjects index
-											break;
-										}
-									}
-								}
-								
-								else{ //If more than 0.80 of Tossups are used, go to pure randomness.
-									$type = array_rand($picksTU);
-								}
-									
-								foreach ($tossupsSelect as $key => $entry){
-									if ($entry['psets_allocations_id'] == $subjects[$type]){
-										updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
-									
-										$delete = $key;
-										$found = true;
-										
-										break;
-									}
-								}
-								
-								if ($found != true){ //Delete Topic
-									unset($picksTU[$type]);
-								}
-								
-								else{
-									unset($tossupsSelect[$delete]);
-								}
-							}
+							//Update Tossup in database with Round ID and Round Number
+							updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentTossup['id'] . "'"));
+							unset($tossupsSelect[$randomIndex]);
 							
 							//Update Packet and Question Numbers
-							if ($found == true){
-								$tossupCount = $tossupCount - 1;
-								$assignedTossups = $assignedTossups + 1;
-								$currentSpot = $currentSpot + 1;
-								
-								if ($tossupCount == 0){
-									if ($packetNum > 1){
-										$tossupCount = $tossupNum;
-									}
-									
-									//Add packet to list of used packets
-									$usedPackets[] = $currentNum;
-									
-									$packetNum = $packetNum - 1;
-									$currentNum = $currentNum + 1;
-									$currentSpot = 1;
-									
-									if ($append == 0){ //Use new packets
-										$currentNum = nextOpenPacket();
-									}
+							$tossupCount = $tossupCount - 1;
+							$assignedTossups = $assignedTossups + 1;
+							$currentSpot = $currentSpot + 1;
+							
+							if ($tossupCount == 0){
+								if ($packetNum > 1){
+									$tossupCount = $tossupNum;
 								}
-																
-								if ($preserve == 1){ //Preserve ordering
-									$currentSpot = nextOpenTossup($currentNum);
+								
+								//Add packet to list of used packets
+								$usedPackets[] = $currentNum;
+								
+								$packetNum = $packetNum - 1;
+								$currentNum = $currentNum + 1;
+								$currentSpot = 1;
+								
+								if ($append == 0){ //Use new packets
+									$currentNum = nextOpenPacket();
 								}
 							}
+															
+							if ($preserve == 1){ //Preserve ordering
+								$currentSpot = nextOpenTossup($currentNum);
+							}
+						}
+						
+						//If incomplete, add last packet to used anyways
+						if ($tossupCount != 0){
+							$usedPackets[] = $currentNum;
 						}
 						
 						$errorPacketsTU = ($tossupNum == 0) ? 0 : $packetNum; //Packet = 0
@@ -573,75 +593,40 @@ if(isset($_SESSION['username'])){
 						}
 						
 						while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
-							$found = false;
+							$randomIndex = array_rand($bonusesSelect);
+							$currentBonus = $bonusesSelect[$randomIndex];
 							
-							while ($found == false and count($picksB) > 0){
-								if ($assignedBonuses < 0.80 * $initialBonuses){									
-									$alpha = mt_rand(0, array_sum($picksB) - 1); //Get Selector, using Twister
-									
-									foreach ($picksB as $index => $value){ //Get Random Topic
-										$alpha = $alpha - $value;
-										
-										if ($alpha < 0){
-											$type = $index; //$subjects index
-											break;
-										}
+							//Update Tossup in database with Round ID and Round Number
+							updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentBonus['id'] . "'"));
+							unset($bonusesSelect[$randomIndex]);
+							
+							//Update Packet and Question Numbers
+							$bonusCount = $bonusCount - 1;
+							$assignedBonuses = $assignedBonuses + 1;
+							$currentSpot = $currentSpot + 1;
+							
+							if ($bonusCount == 0){
+								if ($packetNum > 1){
+									$bonusCount = $bonusNum;
+								}
+								
+								$packetNum = $packetNum - 1;
+								$currentNum = $currentNum + 1;
+								$currentSpot = 1;
+								
+								if ($append == 0){ //Use new packets from tossups
+									if (count($usedPackets) > 0){
+										$currentNum = array_shift($usedPackets);
 									}
-								}
-								
-								else{ //If more than 0.80 of Bonuses are used, go to pure randomness.
-									$type = array_rand($picksB);
-								}
-								
-								foreach ($bonusesSelect as $key => $entry){
-									if ($entry['psets_allocations_id'] == $subjects[$type]){
-										updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $entry['id'] . "'"));
 									
-										$delete = $key;
-										$found = true;
-										
-										break;
+									else{
+										$currentNum = nextOpenPacket();
 									}
-								}
-								
-								if ($found != true){ //Delete Topic
-									unset($picksB[$type]);
-								}
-								
-								else{
-									unset($bonusesSelect[$delete]);
 								}
 							}
 							
-							//Update Packet and Question Numbers
-							if ($found == true){
-								$bonusCount = $bonusCount - 1;
-								$assignedBonuses = $assignedBonuses + 1;
-								$currentSpot = $currentSpot + 1;
-								
-								if ($bonusCount == 0){
-									if ($packetNum > 1){
-										$bonusCount = $bonusNum;
-									}
-									
-									$packetNum = $packetNum - 1;
-									$currentNum = $currentNum + 1;
-									$currentSpot = 1;
-									
-									if ($append == 0){ //Use new packets from tossups
-										if (count($usedPackets) > 0){
-											$currentNum = array_shift($usedPackets);
-										}
-										
-										else{
-											$currentNum = nextOpenPacket();
-										}
-									}
-								}
-								
-								if ($preserve == 1){ //Preserve ordering
-									$currentSpot = nextOpenBonus($currentNum);
-								}
+							if ($preserve == 1){ //Preserve ordering
+								$currentSpot = nextOpenBonus($currentNum);
 							}
 						}
 						

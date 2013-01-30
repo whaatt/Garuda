@@ -12,6 +12,7 @@ header('Content-Disposition: attachment; filename=categories.csv');
 $prefix = (isset($_GET['prefix'])) ? $_GET['prefix'] : 'None'; //Get Round Prefix
 $rounds = (isset($_GET['rounds'])) ? $_GET['rounds'] : 0; //Get Number of Rounds
 $questions = (isset($_GET['questions'])) ? $_GET['questions'] : 0; //Get Number of Questions PP
+$columnsB = (isset($_GET['columns'])) ? $_GET['columns'] : 1;
 $separator = ','; //Default, Standard CSV Separator, defined in some RFC
 
 if (!isset($_SESSION['tournament'])){
@@ -29,6 +30,11 @@ else if ((int) $questions != $questions && (int) $questions <= 0){
 	exit();
 }
 
+else if ((int) $columnsB != $columnsB && (int) $columnsB < 0){
+	echo 'Invalid parameters were passed.';
+	exit();
+}
+
 else if ($questions > 200 or $rounds > 50){
 	echo 'Excessive parameters were passed.';
 	exit();
@@ -36,6 +42,7 @@ else if ($questions > 200 or $rounds > 50){
 
 $questions = (int) $questions;
 $rounds = (int) $rounds;
+$columnsB = (int) $columnsB;
 
 $items = array('subject'); $columns = array('psets_id'); //Get Subjects
 $values = array("'" . $_SESSION['tournament'] . "'");
@@ -60,7 +67,7 @@ for ($i = 1; $i <= $rounds; $i++){
 		$subjectSelectB = selectFrom('psets_allocations', array('subject'), array('id'), array("'" . $bonusSubjectID . "'"));//Get subject by ID
 		$bonusSubject = isset($subjectSelectB[0]['subject']) ? $subjectSelectB[0]['subject'] : 'Invalid';
 		
-		echo 'Question' . $separator . $j . $separator . $tossupSubject . $separator . $bonusSubject . $separator . $bonusSubject . $separator . $bonusSubject . "\r\n";
+		echo 'Question' . $separator . $j . $separator . $tossupSubject . str_repeat($separator . $bonusSubject, $columnsB) . "\r\n";
 	}
 }
 
