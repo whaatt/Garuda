@@ -886,7 +886,7 @@ if(isset($_SESSION['username'])){
 					
 					$subjectSelect = selectFrom('psets_allocations', $items, $columns, $values);//Get subject.
 					$subject = $subjectSelect[0]['subject'];
-					$selector = substr(trim($entry['answer']), 0, 1);
+					$selector = substr(trim($entry['answer1']), 0, 2);
 					
 					if ($selector == 'W:' or $selector == 'X:' or $selector == 'Y:' or $selector == 'Z:'){
 						$type = 'Multiple Choice';
