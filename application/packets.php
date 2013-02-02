@@ -198,32 +198,55 @@ if(isset($_SESSION['username'])){
 		$packets = array();
 		//Get Packet Values
 		
-		$columns = array('round_id');
+		$columns = array('round_id', 'psets_allocations_id');
+		$subjects = array();
+		
 		$tossupsSelect = selectFrom('tossups', $columns, array('psets_id', 'promoted'), array("'" . $_SESSION['tournament'] . "'", "'1'"));
+		$subjectsSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));	
 
+		foreach ($subjectsSelect as $entry){
+			$subjects[$entry['id']] = $entry['subject']; //Populate subjects array
+		}
+		
 		foreach($tossupsSelect as $tossup){
 			if (isset($tossup['round_id']) and $tossup['round_id'] != ''){
 				if (!isset($packets[$tossup['round_id']])){
-					$packets[$tossup['round_id']] = array(1,0);
+					$packets[$tossup['round_id']] = array(1, 0, array($subjects[$tossup['psets_allocations_id']] => 1), array());
 				}
 				
 				else{
 					$packets[$tossup['round_id']][0] += 1;
+					
+					if (!isset($packets[$tossup['round_id']][2][$subjects[$tossup['psets_allocations_id']]])){
+						$packets[$tossup['round_id']][2][$subjects[$tossup['psets_allocations_id']]] = 1;
+					}
+					
+					else{
+						$packets[$tossup['round_id']][2][$subjects[$tossup['psets_allocations_id']]] += 1;
+					}
 				}
 			}
 		}
 		
-		$columns = array('round_id');
+		$columns = array('round_id', 'psets_allocations_id');
 		$bonusesSelect = selectFrom('bonuses', $columns, array('psets_id', 'promoted'), array("'" . $_SESSION['tournament'] . "'", "'1'"));
 
 		foreach($bonusesSelect as $bonus){
 			if (isset($bonus['round_id']) and $bonus['round_id'] != ''){
 				if (!isset($packets[$bonus['round_id']])){
-					$packets[$bonus['round_id']] = array(0,1);
+					$packets[$bonus['round_id']] = array(0, 1, array(), array($subjects[$bonus['psets_allocations_id']] => 1));
 				}
 				
 				else{
 					$packets[$bonus['round_id']][1] += 1;
+					
+					if (!isset($packets[$bonus['round_id']][3][$subjects[$bonus['psets_allocations_id']]])){
+						$packets[$bonus['round_id']][3][$subjects[$bonus['psets_allocations_id']]] = 1;
+					}
+					
+					else{
+						$packets[$bonus['round_id']][3][$subjects[$bonus['psets_allocations_id']]] += 1;
+					}
 				}
 			}
 		}
@@ -244,12 +267,44 @@ if(isset($_SESSION['username'])){
 			
 			ksort($packets); //Sort by ID
 			foreach ($packets as $packet => $counts){
+				ksort($packets[$packet][2]);//sort tooltip subjects alphabetically
+				ksort($packets[$packet][3]);
+				
 				echo '<tr class="greenRow">';
 				
 				echo '<td>' . $packet . '</td>';
-				echo '<td>' . $counts[0] . '</td>';
-				echo '<td>' . $counts[1] . '</td>';
-				echo '<td><a target="_blank" href="packet/qb/' . $packet . '">HTML</a> or <a target="_blank" href="packet/qb/pdf/' . $packet . '">PDF</a></td>';
+				echo '<td><span id="t' . strval($packet) . '">' . $counts[0] . '</span><span style="display: none;" id="tc' . strval($packet) . '">';
+				//Subject Tooltip Code Below
+				
+				$tracker = 1;
+				foreach ($packets[$packet][2] as $topic => $amount){
+					if ($tracker < count($packets[$packet][2])){
+						echo $topic . ' - ' . strval($amount) . '<br>';
+					}
+					
+					else{
+						echo $topic . ' - ' . strval($amount);
+					}
+					
+					$tracker += 1;
+				}
+				
+				echo '</span></td><td><span id="b' . strval($packet) . '">' . $counts[1] . '</span><span style="display: none;" class="subjectTip" id="bc' . strval($packet) . '">';
+				
+				$tracker = 1;
+				foreach ($packets[$packet][3] as $topic => $amount){
+					if ($tracker < count($packets[$packet][3])){
+						echo $topic . ' - ' . strval($amount) . '<br>';
+					}
+					
+					else{
+						echo $topic . ' - ' . strval($amount);
+					}
+					
+					$tracker += 1;
+				}
+				
+				echo '</span></td><td><a target="_blank" href="packet/qb/' . $packet . '">HTML</a> or <a target="_blank" href="packet/qb/pdf/' . $packet . '">PDF</a></td>';
 				echo '<td><a target="_blank" href="packet/sb/' . $packet . '">HTML</a> or <a target="_blank" href="packet/sb/pdf/' . $packet . '">PDF</a></td>';
 				
 				echo '</tr>';
@@ -260,6 +315,11 @@ if(isset($_SESSION['username'])){
 		</table><p></p>
 		<script type="text/javascript">
 			fancy_packets('packets');//Make the table pretty and searchable
+			
+			<? foreach ($packets as $packet => $counts){
+				echo "$('#t" . $packet . "').qtip({content: $('#tc" . $packet . "').html()});";//Make tooltips appear
+				echo "$('#b" . $packet . "').qtip({content: $('#bc" . $packet . "').html()});";
+			} ?>
 		</script>
 		<? //End Boilerplate
 	}
