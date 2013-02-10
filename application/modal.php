@@ -669,7 +669,8 @@ if(isset($_SESSION['username'])){
 						<form id="packetsauto" class="postform" onsubmit="submit_packets_auto(document.getElementById('packetsauto')); return false;">
 							<p style="text-align: left;">Below, you can enter the number of packets you would like to create. Please specify the number of tossups and bonuses per packet that you wish to have. For the allocations field, type relative numbers of questions for each subject. As an example, one might type <i>Math 8</i> followed by <i>Science 20</i> to have 20 science questions for every 8 math questions. These numbers should be whole numbers, and do not have to necessarily correspond with the numbers of TUs and Bonuses.</p><br>
 							<label>Preserve Question Ordering: <input type="checkbox" id="aup_pre" name="aup_pre"></label><br>
-							<label>Append To Existing Packets: <input type="checkbox" id="aup_app" name="aup_app"></label><br><br>
+							<label>Append To Existing Packets: <input type="checkbox" id="aup_app" name="aup_app"></label><br>
+							<label>Factor In Difficulty Settings: <input type="checkbox" id="aup_dfs" name="aup_dfs"></label><br><br>
 							<label>Packets: <input type="text" id="aup_num" name="aup_num" style="width: 25px;"></label><br>
 							<label>Tossups: <input type="text" id="aup_tu" name="aup_tu" style="width: 25px;"></label><br>
 							<label>Bonuses: <input type="text" id="aup_b" name="aup_b" style="width: 25px;"></label><br><br>

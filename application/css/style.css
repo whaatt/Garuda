@@ -15,6 +15,11 @@ body {
 	background:#ddf;
 }
 
+u b, b u {
+	font-weight: bold !important;
+	text-decoration: underline !important;
+}
+
 /* Form Input Box */
 
 .box{

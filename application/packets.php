@@ -20,6 +20,40 @@ function sortQuestions($a, $b){ //Used to sort by sub-array value
 	//round_num should never be NULL in the DB by the time this function is applied
 }
 
+function diffByID($a, $b){
+	return strcmp($a['id'], $b['id']);
+}
+
+function getPacketDifficulty($current, $total){
+	if ($total == 1) {
+		return 'Easy';
+	}
+	
+	else if ($total == 2){
+		if ($current == 1){
+			return 'Easy';
+		}
+		
+		else if ($current == 2){
+			return 'Medium';
+		}
+	}
+	
+	else{
+		if ($current/$total <= 1/3){
+			return 'Easy';
+		}
+		
+		else if ($current/$total <= 2/3){
+			return 'Medium';
+		}
+		
+		else{
+			return 'Hard';
+		}
+	}
+}
+
 function nextOpenPacket(){ //Find unused space in packets
 	$packet = 1; 
 	while (true){
@@ -396,6 +430,7 @@ if(isset($_SESSION['username'])){
 		
 		$preserve = isset($_POST['aup_pre']) and $_POST['aup_pre'] == '' ? '0' : '1';
 		$append = isset($_POST['aup_app']) and $_POST['aup_app'] == '' ? '0' : '1';
+		$difficulty = isset($_POST['aup_dfs']) and $_POST['aup_dfs'] == '' ? '0' : '1';
 		
 		$userSelect = selectFrom('users', array('id'), array('username'), array("'" . $_SESSION['username'] . "'"));
 		$userID = $userSelect[0]['id'];//Get current user's ID
@@ -458,8 +493,8 @@ if(isset($_SESSION['username'])){
 						}
 						
 						//Get all of tournament's promoted questions
-						$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
-						$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
+						$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
+						$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						
 						//Filter anything that has a malformed or invalid subject
 						//Optionally filter anything that is assigned if user wants
@@ -573,6 +608,64 @@ if(isset($_SESSION['username'])){
 						shuffle($tossupsSelect);
 						shuffle($bonusesSelect);
 						
+						//Difficulty Stuff
+						//Make Three Copies
+						
+						$tossupsEasy = array();
+						$tossupsMed = array();
+						$tossupsHard = array();
+						
+						foreach ($tossupsSelect as $entry){
+							if ($entry['difficulty'] == 'e'){
+								$tossupsEasy = array_merge($tossupsEasy, array($entry, $entry, $entry, $entry, $entry)); //5x For Easy
+								$tossupsMed = array_merge($tossupsMed, array($entry, $entry, $entry)); //3x For Med
+								$tossupsHard = array_merge($tossupsHard, array($entry)); //1x For Hard
+							}
+							
+							else if ($entry['difficulty'] == 'm'){
+								$tossupsEasy = array_merge($tossupsEasy, array($entry, $entry, $entry)); //3x For Easy
+								$tossupsMed = array_merge($tossupsMed, array($entry, $entry, $entry)); //3x For Med
+								$tossupsHard = array_merge($tossupsHard, array($entry, $entry, $entry)); //3x For Hard
+							}
+							
+							else if ($entry['difficulty'] == 'h'){
+								$tossupsEasy = array_merge($tossupsEasy, array($entry)); //1x For Easy
+								$tossupsMed = array_merge($tossupsMed, array($entry, $entry, $entry)); //3x For Med
+								$tossupsHard = array_merge($tossupsHard, array($entry, $entry, $entry, $entry, $entry)); //5x For Hard
+							}
+						}
+						
+						$bonusesEasy = array();
+						$bonusesMed = array();
+						$bonusesHard = array();
+						
+						foreach ($bonusesSelect as $entry){
+							if ($entry['difficulty'] == 'e'){
+								$bonusesEasy = array_merge($bonusesEasy, array($entry, $entry, $entry, $entry, $entry)); //5x For Easy
+								$bonusesMed = array_merge($bonusesMed, array($entry, $entry, $entry)); //3x For Med
+								$bonusesHard = array_merge($bonusesHard, array($entry)); //1x For Hard
+							}
+							
+							else if ($entry['difficulty'] == 'm'){
+								$bonusesEasy = array_merge($bonusesEasy, array($entry, $entry, $entry)); //3x For Easy
+								$bonusesMed = array_merge($bonusesMed, array($entry, $entry, $entry)); //3x For Med
+								$bonusesHard = array_merge($bonusesHard, array($entry, $entry, $entry)); //3x For Hard
+							}
+							
+							else if ($entry['difficulty'] == 'h'){
+								$bonusesEasy = array_merge($bonusesEasy, array($entry)); //1x For Easy
+								$bonusesMed = array_merge($bonusesMed, array($entry, $entry, $entry)); //3x For Med
+								$bonusesHard = array_merge($bonusesHard, array($entry, $entry, $entry, $entry, $entry)); //5x For Hard
+							}
+						}
+						
+						shuffle($tossupsEasy);
+						shuffle($bonusesEasy);
+						shuffle($tossupsMed);
+						shuffle($bonusesMed);
+						shuffle($tossupsHard);
+						shuffle($bonusesHard);
+						
 						//Randomly select questions
 						//Add to packets
 						
@@ -592,12 +685,36 @@ if(isset($_SESSION['username'])){
 						$usedPackets = array();
 						
 						while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
-							$randomIndex = array_rand($tossupsSelect);
-							$currentTossup = $tossupsSelect[$randomIndex];
+							if ($difficulty == 1){
+								$level = getPacketDifficulty($currentNum, $savedNum);
+							}
+							
+							else{
+								$level = 'Medium'; //This is a neutral difficulty
+							}
+							
+							if ($level == 'Easy'){
+								$randomIndex = array_rand($tossupsEasy);
+								$currentTossup = $tossupsEasy[$randomIndex];
+							}
+							
+							else if ($level == 'Medium'){
+								$randomIndex = array_rand($tossupsMed);
+								$currentTossup = $tossupsMed[$randomIndex];
+							}
+							
+							else if ($level == 'Hard'){
+								$randomIndex = array_rand($tossupsHard);
+								$currentTossup = $tossupsHard[$randomIndex];
+							}
 							
 							//Update Tossup in database with Round ID and Round Number
 							updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentTossup['id'] . "'"));
-							unset($tossupsSelect[$randomIndex]);
+							
+							//Delete From All Arrays
+							$tossupsEasy = array_udiff($tossupsEasy, array($currentTossup), 'diffByID');
+							$tossupsMed = array_udiff($tossupsMed, array($currentTossup), 'diffByID');
+							$tossupsHard = array_udiff($tossupsHard, array($currentTossup), 'diffByID');
 							
 							//Update Packet and Question Numbers
 							$tossupCount = $tossupCount - 1;
@@ -653,12 +770,36 @@ if(isset($_SESSION['username'])){
 						}
 						
 						while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
-							$randomIndex = array_rand($bonusesSelect);
-							$currentBonus = $bonusesSelect[$randomIndex];
+							if ($difficulty == 1){
+								$level = getPacketDifficulty($currentNum, $savedNum);
+							}
+							
+							else{
+								$level = 'Medium'; //This is a neutral difficulty
+							}
+							
+							if ($level == 'Easy'){
+								$randomIndex = array_rand($bonusesEasy);
+								$currentBonus = $bonusesEasy[$randomIndex];
+							}
+							
+							else if ($level == 'Medium'){
+								$randomIndex = array_rand($bonusesMed);
+								$currentBonus = $bonusesMed[$randomIndex];
+							}
+							
+							else if ($level == 'Hard'){
+								$randomIndex = array_rand($bonusesHard);
+								$currentBonus = $bonusesHard[$randomIndex];
+							}
 							
 							//Update Tossup in database with Round ID and Round Number
 							updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentBonus['id'] . "'"));
-							unset($bonusesSelect[$randomIndex]);
+							
+							//Delete From All Arrays
+							$bonusesEasy = array_udiff($bonusesEasy, array($currentBonus), 'diffByID');
+							$bonusesMed = array_udiff($bonusesMed, array($currentBonus), 'diffByID');
+							$bonusesHard = array_udiff($bonusesHard, array($currentBonus), 'diffByID');
 							
 							//Update Packet and Question Numbers
 							$bonusCount = $bonusCount - 1;
@@ -766,14 +907,26 @@ if(isset($_SESSION['username'])){
 			
 			if (count($tossupsSelect) + count($bonusesSelect) > 0){
 				?>
+					<!DOCTYPE html>
 					<html>
 						<head>
 							<title><? echo $set['title'] . ' - Round ' . $packet; ?></title>
+							<link rel="icon" href="<? echo '../../' . $conf['css_favicon']; ?>" type="image/x-icon" media="all" />
 							<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 							<style type="text/css">
-								h1, h2, h3{
+								h1, h2, h3 {
 									display: inline;
 									font-family: Times New Roman;
+								}
+								
+								u b, b u {
+									font-weight: bold !important;
+									text-decoration: underline !important;
+								}
+							</style>
+							<style type="text/css" media="print">
+								.break {
+									page-break-before: always;
 								}
 							</style>
 						</head>
@@ -783,14 +936,14 @@ if(isset($_SESSION['username'])){
 				echo '<h3>' . $set['title'] . '</h3><br><h3>Round ' . $packet . '</h3><br><br>Tossups: <ol>';
 				
 				foreach ($tossupsSelect as $key => $entry){
-					echo '<li>' . $entry['tossup'] . '</li><br><dd>' . $entry['answer'] . '</dd><br>';
+					echo '<li>' . $entry['tossup'] . '</li><br><dd>' . $entry['answer'] . '</dd>';
 					
 					if ($key != count($tossupsSelect) - 1){
 						echo '<br>';
 					}
 				}
 				
-				echo '</ol><span style="page-break-before: always"></span>Bonuses: <ol>';
+				echo '</ol><div class="break"></span>Bonuses: <ol>';
 				
 				foreach ($bonusesSelect as $entry){
 					echo '<li>' . $entry['leadin'] . '</li><br><dd><ol type="A">';
@@ -798,7 +951,7 @@ if(isset($_SESSION['username'])){
 					foreach (array('1', '2', '3', '4') as $num){
 						if (isset($entry['question' . $num]) and $entry['question' . $num] != ''){
 							echo '<li>' . $entry['question' . $num] . '</li><br>';
-							echo '<dd>' . $entry['answer' . $num] . '</dd><br><br>';
+							echo '<dd>' . $entry['answer' . $num] . '</dd><br>';
 						}
 					}
 					
@@ -839,14 +992,26 @@ if(isset($_SESSION['username'])){
 			
 			if (count($tossupsSelect) + count($bonusesSelect) > 0){
 				?>
+					<!DOCTYPE html>
 					<html>
 						<head>
 							<title><? echo $set['title'] . ' - Round ' . $packet; ?></title>
+							<link rel="icon" href="<? echo '../../' . $conf['css_favicon']; ?>" type="image/x-icon" media="all" />
 							<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 							<style type="text/css">
-								h1, h2, h3{
+								h1, h2, h3 {
 									display: inline;
 									font-family: Times New Roman;
+								}
+								
+								u b, b u {
+									font-weight: bold !important;
+									text-decoration: underline !important;
+								}
+							</style>
+							<style type="text/css" media="print">
+								.break {
+									page-break-before: always;
 								}
 							</style>
 						</head>
@@ -871,14 +1036,14 @@ if(isset($_SESSION['username'])){
 						$type = 'Short Answer';
 					}
 					
-					echo '<li>' . $subject . ' - ' . $type . ' - ' . $entry['tossup'] . '</li><br><dd>' . $entry['answer'] . '</dd><br>';
+					echo '<li>' . $subject . ' - ' . $type . ' - ' . $entry['tossup'] . '</li><br><dd>' . $entry['answer'] . '</dd>';
 					
 					if ($key != count($tossupsSelect) - 1){
 						echo '<br>';
 					}
 				}
 				
-				echo '</ol><span style="page-break-before: always"></span>Bonuses: <ol>';
+				echo '</ol><div class="break"></span>Bonuses: <ol>';
 				
 				foreach ($bonusesSelect as $entry){
 					$items = array('subject'); $columns = array('id');
@@ -896,7 +1061,7 @@ if(isset($_SESSION['username'])){
 						$type = 'Short Answer';
 					}
 				
-					echo '<li>' . $subject . ' - ' . $type . ' - ' . $entry['question1'] . '</li><br><dd>' . $entry['answer1'] . '</dd><br><br>';
+					echo '<li>' . $subject . ' - ' . $type . ' - ' . $entry['question1'] . '</li><br><dd>' . $entry['answer1'] . '</dd><br>';
 				}
 				
 				echo '</ol></body></html>';
