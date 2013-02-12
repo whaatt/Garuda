@@ -623,9 +623,9 @@ if(isset($_SESSION['username'])){
 							}
 							
 							else if ($entry['difficulty'] == 'm'){
-								$tossupsEasy = array_merge($tossupsEasy, array($entry, $entry, $entry)); //3x For Easy
-								$tossupsMed = array_merge($tossupsMed, array($entry, $entry, $entry)); //3x For Med
-								$tossupsHard = array_merge($tossupsHard, array($entry, $entry, $entry)); //3x For Hard
+								$tossupsEasy = array_merge($tossupsEasy, array($entry)); //1x For Easy
+								$tossupsMed = array_merge($tossupsMed, array($entry)); //1x For Med
+								$tossupsHard = array_merge($tossupsHard, array($entry)); //1x For Hard
 							}
 							
 							else if ($entry['difficulty'] == 'h'){
@@ -647,9 +647,9 @@ if(isset($_SESSION['username'])){
 							}
 							
 							else if ($entry['difficulty'] == 'm'){
-								$bonusesEasy = array_merge($bonusesEasy, array($entry, $entry, $entry)); //3x For Easy
-								$bonusesMed = array_merge($bonusesMed, array($entry, $entry, $entry)); //3x For Med
-								$bonusesHard = array_merge($bonusesHard, array($entry, $entry, $entry)); //3x For Hard
+								$bonusesEasy = array_merge($bonusesEasy, array($entry)); //1x For Easy
+								$bonusesMed = array_merge($bonusesMed, array($entry)); //1x For Med
+								$bonusesHard = array_merge($bonusesHard, array($entry)); //1x For Hard
 							}
 							
 							else if ($entry['difficulty'] == 'h'){
@@ -658,13 +658,6 @@ if(isset($_SESSION['username'])){
 								$bonusesHard = array_merge($bonusesHard, array($entry, $entry, $entry, $entry, $entry)); //5x For Hard
 							}
 						}
-						
-						shuffle($tossupsEasy);
-						shuffle($bonusesEasy);
-						shuffle($tossupsMed);
-						shuffle($bonusesMed);
-						shuffle($tossupsHard);
-						shuffle($bonusesHard);
 						
 						//Randomly select questions
 						//Add to packets
@@ -684,7 +677,7 @@ if(isset($_SESSION['username'])){
 						$bonusCount = $bonusNum;
 						$usedPackets = array();
 						
-						while ($packetNum > 0 and count($tossupsSelect) > 0 and $tossupCount > 0){
+						while ($packetNum > 0 and count($tossupsMed) > 0 and $tossupCount > 0){//Use TossupsMed for availability check
 							if ($difficulty == 1){
 								$level = getPacketDifficulty($currentNum, $savedNum);
 							}
@@ -769,7 +762,7 @@ if(isset($_SESSION['username'])){
 							$currentSpot = nextOpenBonus($currentNum);
 						}
 						
-						while ($packetNum > 0 and count($bonusesSelect) > 0 and $bonusCount > 0){
+						while ($packetNum > 0 and count($bonusesMed) > 0 and $bonusCount > 0){//Use BonusesMed for availability check
 							if ($difficulty == 1){
 								$level = getPacketDifficulty($currentNum, $savedNum);
 							}
