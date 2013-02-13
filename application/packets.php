@@ -2,6 +2,7 @@
 
 require_once('conf.php');
 require_once('query.php'); 
+require_once('libs/dompdf/dompdf_config.inc.php'); //Used for generating PDFs
 
 /* Packets Handler */
 
@@ -54,7 +55,7 @@ function getPacketDifficulty($current, $total){
 	}
 }
 
-function nextOpenPacket(){ //Find unused space in packets
+function nextOpenPacket($usedPackets){ //Find unused space in packets
 	$packet = 1; 
 	while (true){
 		$columns = array('promoted', 'psets_id', 'round_id');
@@ -63,7 +64,7 @@ function nextOpenPacket(){ //Find unused space in packets
 		$count = getNumOf('tossups', $columns, $where);
 		$count = $count + getNumOf('bonuses', $columns, $where);
 
-		if ($count == 0){
+		if ($count == 0 and !in_array($packet, $usedPackets)){
 			return $packet;
 		}
 		
@@ -73,7 +74,7 @@ function nextOpenPacket(){ //Find unused space in packets
 	}
 }
 
-function nextOpenTossup($packet){
+function nextOpenTossup($packet, $usedTossups){
 	$tossup = 1; 
 	while (true){
 		$columns = array('promoted', 'psets_id', 'round_id', 'round_num');
@@ -82,7 +83,7 @@ function nextOpenTossup($packet){
 		//getNumOf should be faster than selectFrom
 		$count = getNumOf('tossups', $columns, $where);
 		
-		if ($count == 0){
+		if ($count == 0 and !in_array($tossup, $usedTossups)){
 			return $tossup;
 		}
 		
@@ -92,7 +93,7 @@ function nextOpenTossup($packet){
 	}
 }
 
-function nextOpenBonus($packet){
+function nextOpenBonus($packet, $usedBonuses){
 	$bonus = 1; 
 	while (true){
 		$columns = array('promoted', 'psets_id', 'round_id', 'round_num');
@@ -101,7 +102,7 @@ function nextOpenBonus($packet){
 		//getNumOf should be faster than selectFrom
 		$count = getNumOf('bonuses', $columns, $where);
 		
-		if ($count == 0){
+		if ($count == 0 and !in_array($bonus, $usedBonuses)){
 			return $bonus;
 		}
 		
@@ -338,8 +339,8 @@ if(isset($_SESSION['username'])){
 					$tracker += 1;
 				}
 				
-				echo '</span></td><td><a target="_blank" href="packet/qb/' . $packet . '">HTML</a> or <a target="_blank" href="packet/qb/pdf/' . $packet . '">PDF</a></td>';
-				echo '<td><a target="_blank" href="packet/sb/' . $packet . '">HTML</a> or <a target="_blank" href="packet/sb/pdf/' . $packet . '">PDF</a></td>';
+				echo '</span></td><td><a target="_blank" href="packet/qb/' . $packet . '">Download</a></td>';
+				echo '<td><a target="_blank" href="packet/sb/' . $packet . '">Download</a></td>';
 				
 				echo '</tr>';
 			}
@@ -450,7 +451,6 @@ if(isset($_SESSION['username'])){
 				$packetNum = (int) $packetNum;
 				$tossupNum = (int) $tossupNum;
 				$bonusNum = (int) $bonusNum;
-				$savedNum = $packetNum;
 				
 				$subjectSelect = selectFrom('psets_allocations', array('subject', 'id'), array('psets_id'), array("'" . $_SESSION['tournament'] . "'"));	
 				$entries = array(); $IDs = array(); //Build up an array of subjects and IDs
@@ -659,27 +659,58 @@ if(isset($_SESSION['username'])){
 							}
 						}
 						
+						//Generate list of questions to be filled
+						//Using nextOpenBonus() and nextOpenTossup()
+						
+						$spotsT = array();//TU list
+						$spotsB = array();//B list
+						
+						$usedP = array();
+						$usedT = array();
+						$usedB = array();
+						
+						for ($i = 1; $i <= $packetNum; $i++){
+							if ($append == 0){
+								$focusPacket = nextOpenPacket($usedP);
+								$usedP[] = $focusPacket; //Add to list
+							}
+							
+							else{
+								$focusPacket = $i;
+								$usedP[] = $focusPacket; //Add to list
+							}
+							
+							for ($j = 1; $j <= $tossupNum; $j++){
+								$focusTossup = nextOpenTossup($focusPacket, $usedT);
+								$spotsT[] = array('packet' => $focusPacket, 'tossup' => $focusTossup);
+								$usedT[] = $focusTossup; //Used tossup spot
+							}
+							
+							for ($j = 1; $j <= $bonusNum; $j++){
+								$focusBonus = nextOpenBonus($focusPacket, $usedB);
+								$spotsB[] = array('packet' => $focusPacket, 'bonus' => $focusBonus);
+								$usedB[] = $focusBonus; //Used bonus spot
+							}
+							
+							$usedT = array();
+							$usedB = array();
+						}
+						
+						//Everyday I'm Shufflin'
+						//Do One Last Shuffle
+						
+						shuffle($spotsT);
+						shuffle($spotsB);
+						
 						//Randomly select questions
 						//Add to packets
 						
-						$currentNum = 1; //Packet Number
-						$currentSpot = 1; //Question Number
-						
-						if ($append == 0){ //Use new packets
-							$currentNum = nextOpenPacket();
-						}
-						
-						if ($preserve == 1){ //Preserve ordering
-							$currentSpot = nextOpenTossup($currentNum);
-						}
-						
-						$tossupCount = $tossupNum;
-						$bonusCount = $bonusNum;
-						$usedPackets = array();
-						
-						while ($packetNum > 0 and count($tossupsMed) > 0 and $tossupCount > 0){//Use TossupsMed for availability check
+						while (count($tossupsMed) > 0 and count($spotsT) > 0){//Use TossupsMed for availability check
+							$spotIndex = array_rand($spotsT);
+							$spot = $spotsT[$spotIndex]; //get packet/TU #s
+							
 							if ($difficulty == 1){
-								$level = getPacketDifficulty($currentNum, $savedNum);
+								$level = getPacketDifficulty($spot['packet'], $packetNum);
 							}
 							
 							else{
@@ -702,69 +733,26 @@ if(isset($_SESSION['username'])){
 							}
 							
 							//Update Tossup in database with Round ID and Round Number
-							updateIn('tossups', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentTossup['id'] . "'"));
+							updateIn('tossups', array('round_id', 'round_num'), array("'" . strval($spot['packet']) . "'", "'" . strval($spot['tossup']) . "'"), array('id'), array("'" . $currentTossup['id'] . "'"));
 							
 							//Delete From All Arrays
 							$tossupsEasy = array_udiff($tossupsEasy, array($currentTossup), 'diffByID');
 							$tossupsMed = array_udiff($tossupsMed, array($currentTossup), 'diffByID');
 							$tossupsHard = array_udiff($tossupsHard, array($currentTossup), 'diffByID');
 							
-							//Update Packet and Question Numbers
-							$tossupCount = $tossupCount - 1;
-							$assignedTossups = $assignedTossups + 1;
-							$currentSpot = $currentSpot + 1;
+							//Remove spot used
+							unset($spotsT[$spotIndex]);
+						}
+						
+						//Tossup Nonset Error
+						$errorTU = count($spotsT);
+						
+						while (count($bonusesMed) > 0 and count($spotsB) > 0){//Use BonusesMed for availability check
+							$spotIndex = array_rand($spotsB);
+							$spot = $spotsB[$spotIndex]; //get packet/TU #s
 							
-							if ($tossupCount == 0){
-								if ($packetNum > 1){
-									$tossupCount = $tossupNum;
-								}
-								
-								//Add packet to list of used packets
-								$usedPackets[] = $currentNum;
-								
-								$packetNum = $packetNum - 1;
-								$currentNum = $currentNum + 1;
-								$currentSpot = 1;
-								
-								if ($append == 0){ //Use new packets
-									$currentNum = nextOpenPacket();
-								}
-							}
-															
-							if ($preserve == 1){ //Preserve ordering
-								$currentSpot = nextOpenTossup($currentNum);
-							}
-						}
-						
-						//If incomplete, add last packet to used anyways
-						if ($tossupCount != 0){
-							$usedPackets[] = $currentNum;
-						}
-						
-						$errorPacketsTU = ($tossupNum == 0) ? 0 : $packetNum; //Packet = 0
-						$errorTossups = $tossupCount;
-						
-						$currentNum = 1;
-						$currentSpot = 1;
-						$packetNum = $savedNum;
-						
-						if ($append == 0){ //Use new packets from tossups
-							if (count($usedPackets) > 0){
-								$currentNum = array_shift($usedPackets);
-							}
-							
-							else{
-								$currentNum = nextOpenPacket();
-							}
-						}
-						
-						if ($preserve == 1){ //Preserve ordering
-							$currentSpot = nextOpenBonus($currentNum);
-						}
-						
-						while ($packetNum > 0 and count($bonusesMed) > 0 and $bonusCount > 0){//Use BonusesMed for availability check
 							if ($difficulty == 1){
-								$level = getPacketDifficulty($currentNum, $savedNum);
+								$level = getPacketDifficulty($spot['packet'], $packetNum);
 							}
 							
 							else{
@@ -787,48 +775,21 @@ if(isset($_SESSION['username'])){
 							}
 							
 							//Update Tossup in database with Round ID and Round Number
-							updateIn('bonuses', array('round_id', 'round_num'), array("'" . $currentNum . "'", "'" . $currentSpot . "'"), array('id'), array("'" . $currentBonus['id'] . "'"));
+							updateIn('bonuses', array('round_id', 'round_num'), array("'" . strval($spot['packet']) . "'", "'" . strval($spot['bonus']) . "'"), array('id'), array("'" . $currentBonus['id'] . "'"));
 							
 							//Delete From All Arrays
 							$bonusesEasy = array_udiff($bonusesEasy, array($currentBonus), 'diffByID');
 							$bonusesMed = array_udiff($bonusesMed, array($currentBonus), 'diffByID');
 							$bonusesHard = array_udiff($bonusesHard, array($currentBonus), 'diffByID');
 							
-							//Update Packet and Question Numbers
-							$bonusCount = $bonusCount - 1;
-							$assignedBonuses = $assignedBonuses + 1;
-							$currentSpot = $currentSpot + 1;
-							
-							if ($bonusCount == 0){
-								if ($packetNum > 1){
-									$bonusCount = $bonusNum;
-								}
-								
-								$packetNum = $packetNum - 1;
-								$currentNum = $currentNum + 1;
-								$currentSpot = 1;
-								
-								if ($append == 0){ //Use new packets from tossups
-									if (count($usedPackets) > 0){
-										$currentNum = array_shift($usedPackets);
-									}
-									
-									else{
-										$currentNum = nextOpenPacket();
-									}
-								}
-							}
-							
-							if ($preserve == 1){ //Preserve ordering
-								$currentSpot = nextOpenBonus($currentNum);
-							}
+							unset($spotsB[$spotIndex]);//Remove spot
 						}
 						
-						$errorPacketsB = ($bonusNum == 0) ? 0 : $packetNum;
-						$errorBonuses = $bonusCount;
+						//Bonus Nonset Error
+						$errorB = count($spotsB);
 						
 						//I got 99 problems but a lack of sufficient questions ain't one
-						$problems = $errorPacketsTU + $errorTossups + $errorPacketsB + $errorBonuses;
+						$problems = $errorTU + $errorB;
 						
 						if ($problems > 0){
 							?>
@@ -1070,7 +1031,98 @@ if(isset($_SESSION['username'])){
 		}
 	}
 	
-	else if ($submit == 5 or $submit == 7){
+	else if ($submit == 5 and true == false){//Suspend this temporarily
+		if (isset($_SESSION['tournament'])){
+			$packet = isset($_GET['packet']) ? $_GET['packet'] : '';
+			
+			$columns = array('creator_users_id', 'tossup', 'answer', 'round_num');
+			$tossupsSelect = selectFrom('tossups', $columns, array('psets_id', 'promoted', 'round_id'), array("'" . $_SESSION['tournament'] . "'", "'1'", "'" . $packet . "'"));
+			
+			$columns = array('creator_users_id', 'leadin', 'question1', 'answer1', 'question2', 'answer2', 'question3', 'answer3', 'question4', 'answer4', 'round_num');
+			$bonusesSelect = selectFrom('bonuses', $columns, array('psets_id', 'promoted', 'round_id'), array("'" . $_SESSION['tournament'] . "'", "'1'", "'" . $packet . "'"));
+			
+			$setSelect = selectFrom('psets', array('title'), array('id'), array("'" . $_SESSION['tournament'] . "'"));
+			$set = $setSelect[0];
+			
+			uasort($tossupsSelect, 'sortQuestions');
+			uasort($bonusesSelect, 'sortQuestions');
+			
+			$tossupsSelect = array_values($tossupsSelect);
+			$bonusesSelect = array_values($bonusesSelect);
+			
+			if (count($tossupsSelect) + count($bonusesSelect) > 0){
+				$html =
+					'<!DOCTYPE html>' .
+					'<html>' .
+						'<head>' .
+							'<title>' . $set['title'] . ' - Round ' . $packet . '</title>' .
+							'<link rel="icon" href="' . '../../' . $conf['css_favicon'] . '" type="image/x-icon" media="all" />' .
+							'<meta http-equiv="Content-type" content="text/html; charset=utf-8" />' .
+							'<style type="text/css">' .
+							'	h1, h2, h3 {' .
+							'		display: inline;' .
+							'		font-family: Times New Roman;' .
+							'	}' .
+								
+							'	u b, b u {' .
+							'		font-weight: bold !important;' .
+							'		text-decoration: underline !important;' .
+							'	}' .
+							'</style>' .
+							'<style type="text/css" media="print">' .
+							'	.break {' .
+							'		page-break-before: always;' .
+							'	}' .
+							'</style>' .
+						'</head> ' .
+						'<body>';
+				
+				$html .= '<h3>' . $set['title'] . '</h3><br><h3>Round ' . $packet . '</h3><br><br>Tossups: <ol>';
+				
+				foreach ($tossupsSelect as $key => $entry){
+					$html .= '<li>' . $entry['tossup'] . '</li><br><br><dd>' . $entry['answer'] . '</dd>';
+					
+					if ($key != count($tossupsSelect) - 1){
+						$html .= '<br>';
+					}
+				}
+				
+				$html .= '</ol><div class="break"></span>Bonuses: <ol>';
+				
+				foreach ($bonusesSelect as $entry){
+					$html .= '<li>' . $entry['leadin'] . '</li><br><dd><ol type="A">';
+					
+					foreach (array('1', '2', '3', '4') as $num){
+						if (isset($entry['question' . $num]) and $entry['question' . $num] != ''){
+							$html .= '<li>' . $entry['question' . $num] . '</li><br><br>';
+							$html .= '<dd>' . $entry['answer' . $num] . '</dd><br>';
+						}
+					}
+					
+					$html .= '</ol></dd>';
+				}
+				
+				$html .= '</ol></body></html>';
+			}
+			
+			else{
+				$html = $conf['invalid'];
+			}
+		}
+		
+		else{
+			$html = $conf['deny'];
+		}
+		
+		//Render PDF
+		//$pdf = new DOMPDF();
+		//$pdf->load_html($html);
+		
+		//$pdf->render();
+		//$pdf->stream('Packet' . strval($packet) . '.pdf');
+	}
+	
+	else if ($submit == 7 or $submit == 5){
 		if (isset($_SESSION['tournament'])){
 			?>
 				<h3>Notice</h3>
