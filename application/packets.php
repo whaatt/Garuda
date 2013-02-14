@@ -496,6 +496,13 @@ if(isset($_SESSION['username'])){
 						$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						
+						//Twice, for good measure
+						shuffle($tossupsSelect);
+						shuffle($bonusesSelect);
+						
+						shuffle($tossupsSelect);
+						shuffle($bonusesSelect);
+						
 						//Filter anything that has a malformed or invalid subject
 						//Optionally filter anything that is assigned if user wants
 						foreach ($tossupsSelect as $key => $entry){
@@ -585,6 +592,9 @@ if(isset($_SESSION['username'])){
 						shuffle($toDeleteTU);
 						shuffle($toDeleteB);
 						
+						shuffle($toDeleteTU);
+						shuffle($toDeleteB);
+						
 						foreach ($toDeleteTU as $key => $TUID){
 							if ($availableTU >= $totalTU){
 								unset($tossupsSelect[$TUID]);
@@ -604,9 +614,6 @@ if(isset($_SESSION['username'])){
 								$availableB++;
 							}
 						}
-						
-						shuffle($tossupsSelect);
-						shuffle($bonusesSelect);
 						
 						//Difficulty Stuff
 						//Make Three Copies
@@ -697,10 +704,21 @@ if(isset($_SESSION['username'])){
 						}
 						
 						//Everyday I'm Shufflin'
-						//Do One Last Shuffle
+						//Do Two Last Shuffles
 						
-						shuffle($spotsT);
-						shuffle($spotsB);
+						shuffle($tossupsEasy);
+						shuffle($tossupsMed);
+						shuffle($tossupsHard);
+						shuffle($bonusesEasy);
+						shuffle($bonusesMed);
+						shuffle($bonusesHard);
+						
+						shuffle($tossupsEasy);
+						shuffle($tossupsMed);
+						shuffle($tossupsHard);
+						shuffle($bonusesEasy);
+						shuffle($bonusesMed);
+						shuffle($bonusesHard);
 						
 						//Randomly select questions
 						//Add to packets
