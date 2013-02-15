@@ -339,8 +339,8 @@ if(isset($_SESSION['username'])){
 					$tracker += 1;
 				}
 				
-				echo '</span></td><td><a target="_blank" href="packet/qb/' . $packet . '">Download</a></td>';
-				echo '<td><a target="_blank" href="packet/sb/' . $packet . '">Download</a></td>';
+				echo '</span></td><td><a target="_blank" href="packet/qb/' . $packet . '">Download</a><!-- or <a target="_blank" href="packet/qb/pdf/' . $packet . '">PDF</a>--></td>';
+				echo '<td><a target="_blank" href="packet/sb/' . $packet . '">Download</a><!-- or <a target="_blank" href="packet/sb/pdf/' . $packet . '">PDF</a>--></td>';
 				
 				echo '</tr>';
 			}
@@ -915,7 +915,7 @@ if(isset($_SESSION['username'])){
 					}
 				}
 				
-				echo '</ol><div class="break"></span>Bonuses: <ol>';
+				echo '</ol><div class="break"></div>Bonuses: <ol>';
 				
 				foreach ($bonusesSelect as $entry){
 					echo '<li>' . $entry['leadin'] . '</li><br><dd><ol type="A">';
@@ -1015,7 +1015,7 @@ if(isset($_SESSION['username'])){
 					}
 				}
 				
-				echo '</ol><div class="break"></span>Bonuses: <ol>';
+				echo '</ol><div class="break"></div>Bonuses: <ol>';
 				
 				foreach ($bonusesSelect as $entry){
 					$items = array('subject'); $columns = array('id');
@@ -1049,7 +1049,7 @@ if(isset($_SESSION['username'])){
 		}
 	}
 	
-	else if ($submit == 5 and true == false){//Suspend this temporarily
+	else if ($submit == 5 and false){//Suspend this temporarily
 		if (isset($_SESSION['tournament'])){
 			$packet = isset($_GET['packet']) ? $_GET['packet'] : '';
 			
@@ -1086,8 +1086,7 @@ if(isset($_SESSION['username'])){
 							'		font-weight: bold !important;' .
 							'		text-decoration: underline !important;' .
 							'	}' .
-							'</style>' .
-							'<style type="text/css" media="print">' .
+							
 							'	.break {' .
 							'		page-break-before: always;' .
 							'	}' .
@@ -1105,10 +1104,10 @@ if(isset($_SESSION['username'])){
 					}
 				}
 				
-				$html .= '</ol><div class="break"></span>Bonuses: <ol>';
+				$html .= '</ol><div class="break"></div>Bonuses: <br><ol>';
 				
 				foreach ($bonusesSelect as $entry){
-					$html .= '<li>' . $entry['leadin'] . '</li><br><dd><ol type="A">';
+					$html .= '<li>' . $entry['leadin'] . '<br><br><dd><ol type="A">';
 					
 					foreach (array('1', '2', '3', '4') as $num){
 						if (isset($entry['question' . $num]) and $entry['question' . $num] != ''){
@@ -1117,7 +1116,7 @@ if(isset($_SESSION['username'])){
 						}
 					}
 					
-					$html .= '</ol></dd>';
+					$html .= '</ol></dd></li>';
 				}
 				
 				$html .= '</ol></body></html>';
@@ -1133,11 +1132,11 @@ if(isset($_SESSION['username'])){
 		}
 		
 		//Render PDF
-		//$pdf = new DOMPDF();
-		//$pdf->load_html($html);
+		$pdf = new DOMPDF();
+		$pdf->load_html($html);
 		
-		//$pdf->render();
-		//$pdf->stream('Packet' . strval($packet) . '.pdf');
+		$pdf->render();
+		$pdf->stream('Packet' . strval($packet) . '.pdf');
 	}
 	
 	else if ($submit == 7 or $submit == 5){

@@ -4,9 +4,10 @@
  * Can also be used with HTTP GET parameters
  * 
  * @package dompdf
- * @link    http://dompdf.github.com/
+ * @link    http://www.dompdf.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @version $Id: dompdf.php 448 2011-11-13 13:00:03Z fabien.menager $
  */
 
 /**
@@ -223,7 +224,7 @@ switch ( $sapi ) {
   if(($file_parts['protocol'] == '' || $file_parts['protocol'] === 'file://')) {
     $file = realpath($file);
     if ( strpos($file, DOMPDF_CHROOT) !== 0 ) {
-      throw new DOMPDF_Exception("Permission denied on $file. The file could not be found under the directory specified by DOMPDF_CHROOT.");
+      throw new DOMPDF_Exception("Permission denied on $file.");
     }
   }
   
