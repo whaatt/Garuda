@@ -41,11 +41,11 @@ function getPacketDifficulty($current, $total){
 	}
 	
 	else{
-		if ($current/$total <= 1/3){
+		if ($current/$total <= 2/5){
 			return 'Easy';
 		}
 		
-		else if ($current/$total <= 2/3){
+		else if ($current/$total <= 3/5){
 			return 'Medium';
 		}
 		
@@ -550,11 +550,11 @@ if(isset($_SESSION['username'])){
 						
 						//Get absolute numbers of weights
 						foreach ($picksTU as $key => $value){
-							$picksTU[$key] = floor(($value / $weightSum) * $totalTU);
+							$picksTU[$key] = ceil(($value / $weightSum) * $totalTU) + 1;
 						}
 						
 						foreach ($picksB as $key => $value){
-							$picksB[$key] = floor(($value / $weightSum) * $totalB);
+							$picksB[$key] = ceil(($value / $weightSum) * $totalB) + 1;
 						}
 						
 						//Filter question set to match weights
