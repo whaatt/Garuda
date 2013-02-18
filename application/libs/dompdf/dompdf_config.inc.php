@@ -1,12 +1,11 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Helmut Tischer <htischer@weihenstephan.org>
- * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @author  Fabien MÃ©nager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id: dompdf_config.inc.php 468 2012-02-05 10:51:40Z fabien.menager $
  */
 
 //error_reporting(E_STRICT | E_ALL | E_DEPRECATED);
@@ -307,6 +306,13 @@ def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
 def("DOMPDF_ENABLE_CSS_FLOAT", false);
 
 /**
+ * Enable the built in DOMPDF autoloader
+ *
+ * @var bool
+ */
+def("DOMPDF_ENABLE_AUTOLOAD", true);
+
+/**
  * Prepend the DOMPDF autoload function the spl_autoload stack
  *
  * @var bool
@@ -316,12 +322,18 @@ def("DOMPDF_AUTOLOAD_PREPEND", false);
 /**
  * Use the more-than-experimental HTML5 Lib parser
  */
-def("DOMPDF_ENABLE_HTML5PARSER", true);
+def("DOMPDF_ENABLE_HTML5PARSER", false);
 require_once(DOMPDF_LIB_DIR . "/html5lib/Parser.php");
 
 // ### End of user-configurable options ###
 
-require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
+/**
+ * Load autoloader
+ */
+if (DOMPDF_ENABLE_AUTOLOAD) {
+  require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
+  require_once(DOMPDF_LIB_DIR . "/php-font-lib/classes/font.cls.php");
+}
 
 /**
  * Ensure that PHP is working with text internally using UTF8 character encoding.
