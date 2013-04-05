@@ -98,6 +98,7 @@ switch($context){
 					<li><a class="active"><span>Tournament</span></a></li>
 					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
 					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
 					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
 					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
@@ -110,6 +111,7 @@ switch($context){
 					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
 					<li><a class="active"><span>Members</span></a></li>
 					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
 					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
 					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
@@ -122,18 +124,33 @@ switch($context){
 					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
 					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
 					<li><a class="active"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
 					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
 					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
 					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
 				</ul>
-				<? break;	
+				<? break;
+			case 'Import':
+				?>
+				<ul>
+					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
+					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
+					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a class="active"><span>Import</span></a></li>
+					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
+					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
+					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
+					<li><a onclick="go_leave(); return false;"><span>Leave</span></a></li>
+				</ul>
+				<? break;
 			case 'Tossups':
 				?>
 				<ul>
 					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
 					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
 					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a class="active"><span>Tossups</span></a></li>
 					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
 					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
@@ -146,6 +163,7 @@ switch($context){
 					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
 					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
 					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
 					<li><a class="active"><span>Bonuses</span></a></li>
 					<li><a onclick="go_packets(); return false;"><span>Packets</span></a></li>
@@ -158,6 +176,7 @@ switch($context){
 					<li><a onclick="go_tournament(); return false;"><span>Tournament</span></a></li>
 					<li><a onclick="go_members(); return false;"><span>Members</span></a></li>
 					<li><a onclick="go_stats(); return false;"><span>Stats</span></a></li>
+					<li><a onclick="go_import(); return false;"><span>Import</span></a></li>
 					<li><a onclick="go_tossups(); return false;"><span>Tossups</span></a></li>
 					<li><a onclick="go_bonuses(); return false;"><span>Bonuses</span></a></li>
 					<li><a class="active"><span>Packets</span></a></li>

@@ -71,5 +71,6 @@ $conf['bonuses'] = "<p>The following table lists all bonuses associated with thi
 $conf['packets'] = "<p>The first table below lists all of the tossups and bonuses that have been promoted. Underneath the first table, you may download any packets that have been generated. You may either manually or automatically assign questions to packets; to automatically assign the sets, please ";
 $conf['deny'] = "<p>You must be signed into a tournament in order to access packets, for security reasons.</p>";
 $conf['invalid'] = "<p>The packet you selected is either invalid or has no tossups or bonuses in it.</p>";
+$conf['import'] = "<p>Administrators and directors may use the form below to import unpromoted questions from another tournament stored on this server. If you accidentally or intentionally import a tournament's questions twice, duplicate questions will not be re-imported; this will not apply to already-edited questions.</p>";
 
 ?>

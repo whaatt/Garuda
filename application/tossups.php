@@ -347,11 +347,17 @@ if(isset($_SESSION['username'])){
 			$subjectSelect = selectFrom('psets_allocations', $items, $columns, $values);//Get subject.
 			$subject = isset($subjectSelect[0]['subject']) ? $subjectSelect[0]['subject'] : 'None Set';
 			
-			$items = array('name'); $columns = array('id');
-			$values = array("'" . sanitize($tossup['creator_users_id']) . "'");
+			if ($tossup['creator_users_id'] != '0'){
+				$items = array('name'); $columns = array('id');
+				$values = array("'" . sanitize($tossup['creator_users_id']) . "'");
 			
-			$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
-			$name = $userSelect[0]['name'];
+				$userSelect = selectFrom('users', $items, $columns, $values);//Get user name.
+				$name = $userSelect[0]['name'];
+			}
+			
+			else{
+				$name = 'Imported';
+			}
 			
 			$items = array('tossup_or_bonus', 'tub_id'); $values = array("'" . '0' . "'", "'" . sanitize($tossup['id']) . "'");
 			$msgCount = strval(getNumOf('messages', $items, $values));//Get number of messages

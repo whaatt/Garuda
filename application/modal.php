@@ -220,7 +220,14 @@ if(isset($_SESSION['username'])){
 						<form id="edittossup" class="postform" onsubmit="submit_edit_tossup(document.getElementById('edittossup')); return false;">
 							<p style="text-align: left;">Use the top box to type your tossup's body, and the bottom box to type your tossup's answer. Thanks!</p><br>
 							<?
-								echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								if ($tossup['creator_users_id'] != '0'){
+									echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								}
+								
+								else{
+									echo '<b>Creator:</b> Imported<br>';
+								}
+								
 								echo '<b>Created:</b> ' . $tossup['created'];
 							?>
 							<br><br><label>Categorize By Subject: <select id="edt_subj" name="edt_subj">
@@ -250,7 +257,15 @@ if(isset($_SESSION['username'])){
 				$user = $userSelect[0];//Get user info
 				
 				echo '<h3>View Tossup</h3><br>';
-				echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+				
+				if ($tossup['creator_users_id'] != '0'){
+					echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+				}
+				
+				else{
+					echo '<b>Creator:</b> Imported<br>';
+				}
+				
 				echo '<b>Created:</b> ' . $tossup['created'];
 				
 				if (isset($tossup['tossup']) and $tossup['tossup'] != ''){
@@ -442,7 +457,14 @@ if(isset($_SESSION['username'])){
 						<form id="editbonus" class="postform" onsubmit="submit_edit_bonus(document.getElementById('editbonus')); return false;">
 							<p style="text-align: left;">I apologize for the giant popup box. Anyways, the boxes are, in order, the lead-in (e.g. FTPE), the first question, the first answer, the second question, and so on until the fourth answer. You do not have to use all of the bonus fields, however (ask your tournament director).</p><br>
 							<?
-								echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								if ($bonus['creator_users_id'] != '0'){
+									echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+								}
+								
+								else{
+									echo '<b>Creator:</b> Imported<br>';
+								}
+								
 								echo '<b>Created:</b> ' . $bonus['created'];
 							?>
 							<br><br><label>Categorize By Subject: <select id="edb_subj" name="edb_subj">
@@ -479,7 +501,15 @@ if(isset($_SESSION['username'])){
 				$user = $userSelect[0];//Get user info
 				
 				echo '<h3>View Bonus</h3><br>';
-				echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+				
+				if ($bonus['creator_users_id'] != '0'){
+					echo '<b>Creator:</b> ' . $user['name'] . ' (' . $user['username'] . ')<br>';
+				}
+				
+				else{
+					echo '<b>Creator:</b> Imported<br>';
+				}
+				
 				echo '<b>Created:</b> ' . $bonus['created'];
 				
 				if (isset($bonus['leadin']) and $bonus['leadin'] != ''){

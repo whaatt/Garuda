@@ -22,6 +22,7 @@ function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]
 function go_tournament(){message('tournament.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
 function go_members(){message('members.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Members'])]);});}
 function go_stats(){message('stats.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Stats'])]);});}
+function go_import(){message('import.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Import'])]);});}
 function go_tossups(){message('tossups.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tossups'])]);});}
 function go_bonuses(){message('bonuses.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Bonuses'])]);});}
 function go_packets(){message('packets.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Packets'])]);});}
@@ -42,6 +43,7 @@ function submit_register(obj){message('register.php','registerform',0,0,1,[po(['
 function submit_login(obj){message('login.php','loginform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_create(obj){message('create.php','createform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_join(obj){message('join.php','joinform',0,0,1,[po(['submit'],['1']),obj]);}
+function submit_import(obj){message('import.php','importform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_account(obj){message('account.php','accountform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_update(obj){message('tournament.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
 function submit_member(obj){message('members.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}

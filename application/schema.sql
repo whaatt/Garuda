@@ -49,8 +49,20 @@ CREATE TABLE tossups(
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
 	round_num TEXT,
-	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
+	created TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+	text_hash VARCHAR(40) NOT NULL, /* SHA1 */
+	UNIQUE KEY tossups_fields (text_hash)
 );
+
+CREATE TRIGGER tossups_before_update BEFORE UPDATE ON tossups 
+FOR EACH
+ROW
+SET NEW.text_hash = SHA1(CONCAT(NEW.psets_id, NEW.creator_users_id, NEW.tossup, NEW.answer));
+
+CREATE TRIGGER tossups_before_insert BEFORE INSERT ON tossups 
+FOR EACH
+ROW
+SET NEW.text_hash = SHA1(CONCAT(NEW.psets_id, NEW.creator_users_id, NEW.tossup, NEW.answer));
 
 CREATE TABLE bonuses(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -73,8 +85,20 @@ CREATE TABLE bonuses(
 	promoted TINYINT(1) NOT NULL, /* Initialize with zero. */
 	round_id TEXT,
 	round_num TEXT,
-	created TIMESTAMP DEFAULT '0000-00-00 00:00:00'
+	created TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+	text_hash VARCHAR(40) NOT NULL, /* SHA1 */
+	UNIQUE KEY bonuses_fields (text_hash)
 );
+
+CREATE TRIGGER bonuses_before_update BEFORE UPDATE ON bonuses 
+FOR EACH
+ROW
+SET NEW.text_hash = SHA1(CONCAT(NEW.psets_id, NEW.creator_users_id, NEW.leadin, NEW.question1, NEW.answer1, NEW.question2, NEW.answer2, NEW.question3, NEW.answer3, NEW.question4, NEW.answer4));
+
+CREATE TRIGGER bonuses_before_insert BEFORE INSERT ON bonuses 
+FOR EACH
+ROW
+SET NEW.text_hash = SHA1(CONCAT(NEW.psets_id, NEW.creator_users_id, NEW.leadin, NEW.question1, NEW.answer1, NEW.question2, NEW.answer2, NEW.question3, NEW.answer3, NEW.question4, NEW.answer4));
 
 CREATE TABLE messages(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
