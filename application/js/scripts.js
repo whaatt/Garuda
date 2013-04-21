@@ -62,7 +62,7 @@ function submit_delete_bonus(id){message('bonuses.php','content',0,1,1,[po(['sub
 function submit_delete_message_tossup(id){message('tossups.php','content',0,1,1,[po(['submit','id'],['6',id])], function(){$(document).trigger('close.facebox');})}
 function submit_delete_message_bonus(id){message('bonuses.php','content',0,1,1,[po(['submit','id'],['6',id])], function(){$(document).trigger('close.facebox');})}
 function submit_packets_assign(obj){message('packets.php','content',0,1,1,[po(['submit'],['1']),obj], function(){$(document).trigger('close.facebox');})}
-function submit_packets_auto(obj){message('packets.php','content',0,1,1,[po(['submit'],['3']),obj], function(){$(document).trigger('close.facebox');})}
+function submit_packets_auto(obj){$('#aup_sbt').hide(); $('#aup_hbt').show(); message('packets.php','content',0,1,1,[po(['submit'],['3']),obj], function(){$(document).trigger('close.facebox');})}
 
 //Initializers
 

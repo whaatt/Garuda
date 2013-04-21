@@ -705,7 +705,8 @@ if(isset($_SESSION['username'])){
 							<label>Tossups: <input type="text" id="aup_tu" name="aup_tu" style="width: 25px;"></label><br>
 							<label>Bonuses: <input type="text" id="aup_b" name="aup_b" style="width: 25px;"></label><br><br>
 							<label>Subject Selection: <br><textarea type="text" id="aup_alloc" name="aup_alloc"><? echo $subjects; ?></textarea></label><br><br>
-						</form><button type="button" onclick="submit_packets_auto(document.getElementById('packetsauto')); return false;">Generate</button>
+						</form><button type="button" id="aup_sbt" name="aup_sbt" onclick="submit_packets_auto(document.getElementById('packetsauto')); return false;">Generate</button>
+						<button type="button" id="aup_hbt" name="aup_hbt" style="display: none;" disabled="disabled">Loading...</button>
 					</div></p>
 				<?
 			}

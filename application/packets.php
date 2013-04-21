@@ -16,6 +16,20 @@ function isPosInt($input){
 	}
 }
 
+function mtRandShuffle($array){
+	$shuffled = array();
+	
+	while (count($array) > 0){
+		$index = mt_rand(0, count($array) - 1);
+		$shuffled[] = $array[$index];
+		
+		unset($array[$index]);
+		$array = array_values($array);
+	}
+	
+	return $shuffled;
+}
+
 function sortQuestions($a, $b){ //Used to sort by sub-array value
 	return (int) $a['round_num'] - (int) $b['round_num']; //Don't Worry, (int) '' == 0
 	//round_num should never be NULL in the DB by the time this function is applied
@@ -496,12 +510,9 @@ if(isset($_SESSION['username'])){
 						$tossupsSelect = selectFrom('tossups', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						$bonusesSelect = selectFrom('bonuses', array('id', 'psets_allocations_id', 'difficulty', 'round_id'), array('promoted', 'psets_id'), array("'1'", "'" . $_SESSION['tournament'] . "'"));
 						
-						//Twice, for good measure
-						shuffle($tossupsSelect);
-						shuffle($bonusesSelect);
-						
-						shuffle($tossupsSelect);
-						shuffle($bonusesSelect);
+						//Randomize array
+						$tossupsSelect = mtRandShuffle($tossupsSelect);
+						$bonusesSelect = mtRandShuffle($bonusesSelect);
 						
 						//Filter anything that has a malformed or invalid subject
 						//Optionally filter anything that is assigned if user wants
@@ -550,11 +561,11 @@ if(isset($_SESSION['username'])){
 						
 						//Get absolute numbers of weights
 						foreach ($picksTU as $key => $value){
-							$picksTU[$key] = ceil(($value / $weightSum) * $totalTU) + 1;
+							$picksTU[$key] = intval(round(($value / $weightSum) * $totalTU));
 						}
 						
 						foreach ($picksB as $key => $value){
-							$picksB[$key] = ceil(($value / $weightSum) * $totalB) + 1;
+							$picksB[$key] = intval(round(($value / $weightSum) * $totalB));
 						}
 						
 						//Filter question set to match weights
@@ -589,11 +600,8 @@ if(isset($_SESSION['username'])){
 						//Add what's left over to fill out a set
 						//Delete the rest!!
 						
-						shuffle($toDeleteTU);
-						shuffle($toDeleteB);
-						
-						shuffle($toDeleteTU);
-						shuffle($toDeleteB);
+						$toDeleteTU = mtRandShuffle($toDeleteTU);
+						$toDeleteB = mtRandShuffle($toDeleteB);
 						
 						foreach ($toDeleteTU as $key => $TUID){
 							if ($availableTU >= $totalTU){
@@ -703,28 +711,11 @@ if(isset($_SESSION['username'])){
 							$usedB = array();
 						}
 						
-						//Everyday I'm Shufflin'
-						//Do Two Last Shuffles
-						
-						shuffle($tossupsEasy);
-						shuffle($tossupsMed);
-						shuffle($tossupsHard);
-						shuffle($bonusesEasy);
-						shuffle($bonusesMed);
-						shuffle($bonusesHard);
-						
-						shuffle($tossupsEasy);
-						shuffle($tossupsMed);
-						shuffle($tossupsHard);
-						shuffle($bonusesEasy);
-						shuffle($bonusesMed);
-						shuffle($bonusesHard);
-						
 						//Randomly select questions
 						//Add to packets
 						
 						while (count($tossupsMed) > 0 and count($spotsT) > 0){//Use TossupsMed for availability check
-							$spotIndex = array_rand($spotsT);
+							$spotIndex = mt_rand(0, count($spotsT) - 1);
 							$spot = $spotsT[$spotIndex]; //get packet/TU #s
 							
 							if ($difficulty == 1){
@@ -736,37 +727,38 @@ if(isset($_SESSION['username'])){
 							}
 							
 							if ($level == 'Easy'){
-								$randomIndex = array_rand($tossupsEasy);
+								$randomIndex = mt_rand(0, count($tossupsEasy) - 1);
 								$currentTossup = $tossupsEasy[$randomIndex];
 							}
 							
 							else if ($level == 'Medium'){
-								$randomIndex = array_rand($tossupsMed);
+								$randomIndex = mt_rand(0, count($tossupsMed) - 1);
 								$currentTossup = $tossupsMed[$randomIndex];
 							}
 							
 							else if ($level == 'Hard'){
-								$randomIndex = array_rand($tossupsHard);
+								$randomIndex = mt_rand(0, count($tossupsHard) - 1);
 								$currentTossup = $tossupsHard[$randomIndex];
 							}
 							
 							//Update Tossup in database with Round ID and Round Number
 							updateIn('tossups', array('round_id', 'round_num'), array("'" . strval($spot['packet']) . "'", "'" . strval($spot['tossup']) . "'"), array('id'), array("'" . $currentTossup['id'] . "'"));
 							
-							//Delete From All Arrays
-							$tossupsEasy = array_udiff($tossupsEasy, array($currentTossup), 'diffByID');
-							$tossupsMed = array_udiff($tossupsMed, array($currentTossup), 'diffByID');
-							$tossupsHard = array_udiff($tossupsHard, array($currentTossup), 'diffByID');
+							//Delete From All Arrays, Reindex
+							$tossupsEasy = array_values(array_udiff($tossupsEasy, array($currentTossup), 'diffByID'));
+							$tossupsMed = array_values(array_udiff($tossupsMed, array($currentTossup), 'diffByID'));
+							$tossupsHard = array_values(array_udiff($tossupsHard, array($currentTossup), 'diffByID'));
 							
 							//Remove spot used
 							unset($spotsT[$spotIndex]);
+							$spotsT = array_values($spotsT);
 						}
 						
 						//Tossup Nonset Error
 						$errorTU = count($spotsT);
 						
 						while (count($bonusesMed) > 0 and count($spotsB) > 0){//Use BonusesMed for availability check
-							$spotIndex = array_rand($spotsB);
+							$spotIndex = mt_rand(0, count($spotsB) - 1);
 							$spot = $spotsB[$spotIndex]; //get packet/TU #s
 							
 							if ($difficulty == 1){
@@ -778,29 +770,30 @@ if(isset($_SESSION['username'])){
 							}
 							
 							if ($level == 'Easy'){
-								$randomIndex = array_rand($bonusesEasy);
+								$randomIndex = mt_rand(0, count($bonusesEasy) - 1);
 								$currentBonus = $bonusesEasy[$randomIndex];
 							}
 							
 							else if ($level == 'Medium'){
-								$randomIndex = array_rand($bonusesMed);
+								$randomIndex = mt_rand(0, count($bonusesMed) - 1);
 								$currentBonus = $bonusesMed[$randomIndex];
 							}
 							
 							else if ($level == 'Hard'){
-								$randomIndex = array_rand($bonusesHard);
+								$randomIndex = mt_rand(0, count($bonusesHard) - 1);
 								$currentBonus = $bonusesHard[$randomIndex];
 							}
 							
 							//Update Tossup in database with Round ID and Round Number
 							updateIn('bonuses', array('round_id', 'round_num'), array("'" . strval($spot['packet']) . "'", "'" . strval($spot['bonus']) . "'"), array('id'), array("'" . $currentBonus['id'] . "'"));
 							
-							//Delete From All Arrays
-							$bonusesEasy = array_udiff($bonusesEasy, array($currentBonus), 'diffByID');
-							$bonusesMed = array_udiff($bonusesMed, array($currentBonus), 'diffByID');
-							$bonusesHard = array_udiff($bonusesHard, array($currentBonus), 'diffByID');
+							//Delete From All Arrays, Reindex
+							$bonusesEasy = array_values(array_udiff($bonusesEasy, array($currentBonus), 'diffByID'));
+							$bonusesMed = array_values(array_udiff($bonusesMed, array($currentBonus), 'diffByID'));
+							$bonusesHard = array_values(array_udiff($bonusesHard, array($currentBonus), 'diffByID'));
 							
 							unset($spotsB[$spotIndex]);//Remove spot
+							$spotsB = array_values($spotsB);
 						}
 						
 						//Bonus Nonset Error
