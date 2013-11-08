@@ -177,7 +177,7 @@ if(isset($_SESSION['username'])){
 			$roleSelect = selectFrom('permissions', array('role'), array('users_id', 'psets_id'), array("'" . $userID . "'", "'" . $_SESSION['tournament'] . "'"));
 			$role = $roleSelect[0]['role'];
 			
-			if ($role == 'd'){
+			if ($role == 'd' or $role == 'a'){ //director OR administrator can see access codes. why wasn't this there before
 				$codeSelect = selectFrom('psets', array('admin_access_code', 'manager_access_code', 'editor_access_code'), array('id'), array("'" . $_SESSION['tournament'] . "'"));
 				echo $conf['codes'] . ' The administrator code is ' . $codeSelect[0]['admin_access_code'] . ', ' . 'the manager code is ' . $codeSelect[0]['manager_access_code'] . ', ' . 'and the editor code is ' . $codeSelect[0]['editor_access_code'] . '. Please keep these within your staff.';
 			}
