@@ -22,16 +22,31 @@ if ($submit == '1'){ //Login Form Submission
 	
 	else{
 		$columns = array('username', 'password');
+		$columnsTemp = array('username', 'temp');
 		$values = array("'" . sanitize($user) . "'", "'" . hash('whirlpool', sanitize($pass)) . "'");
-		if (getNumOf('users', $columns, $values) == 1){//Check For Validation
+		if (getNumOf('users', $columns, $values) == 1 or getNumOf('users', $columnsTemp, $values) == 1){//Check For Validation with either regular or temp pass
 			$_SESSION['username'] = $user;
 			unset($_SESSION['context']);
 			$_SESSION['context'] = 'dash';
-			?>
-			<div class="message thank-message" onclick="cont_dashboard();">
-				<p><strong>Your credentials have been validated. (Click to continue.)</strong></p>
-			</div>
-			<?
+			
+			$userSelect = selectFrom('users', array('email'), array('username'), array("'" . $_SESSION['username'] . "'"));
+			$currentEmail = $userSelect[0]['email'];
+			
+			if (strlen($currentEmail) > 0){
+				?>
+				<div class="message thank-message" onclick="cont_dashboard();">
+					<p><strong>Your credentials have been validated. (Click to continue.)</strong></p>
+				</div>
+				<?
+			}
+			
+			else{
+				?>
+				<div class="message error-message" onclick="cont_password();">
+					<p><strong>You need to set an account email! (Click to continue.)</strong></p>
+				</div>
+				<?
+			}
 		}
 		else{
 			?>

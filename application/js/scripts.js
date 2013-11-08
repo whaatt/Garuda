@@ -10,13 +10,14 @@ function po(params,values){ret="<form>";for(var i=0;i<params.length;i++){ret+="<
 //Links
 
 function go_register(){message('register.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Register'])]);});}
+function go_forgot(){message('forgot.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Forgot'])]);});}
 function go_login(){message('login.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Login'])]);});}
 function go_welcome(fade){fade = typeof fade !== 'undefined' ? fade : 0; message('welcome.php','content',0,0,1,[], function(){message('menu.php','navigation',0,0,fade,[po(['link'],['Welcome'])]);});}
 
 function go_dashboard(fade){fade = typeof fade !== 'undefined' ? fade : 0; message('dashboard.php','content',0,0,1,[], function(){message('menu.php','navigation',0,0,fade,[po(['link'],['Dashboard'])]);});}
 function go_create(){message('create.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Create'])]);});}
 function go_join(){message('join.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Join'])]);});}
-function go_account(){message('account.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Account'])]);});}
+function go_account(fade){fade = typeof fade !== 'undefined' ? fade : 0; message('account.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,fade,[po(['link'],['Account'])]);});}
 function go_logout(){message('logout.php','content',0,1,1,[po(['really'],['0'])]);}
 
 function go_tournament(){message('tournament.php','content',0,0,1,[po(['submit'],['0'])], function(){message('menu.php','navigation',0,0,0,[po(['link'],['Tournament'])]);});}
@@ -31,6 +32,7 @@ function go_leave(){message('leave.php','content',0,1,1,[po(['really'],['0'])]);
 //Continuations
 
 function cont_dashboard(){go_dashboard(1); message('greeting.php','greeting',0,0,0,[]);}
+function cont_password(){go_account(1); message('greeting.php','greeting',0,0,0,[]);}
 function cont_logout(){message('logout.php','',0,0,0,[po(['really'],['1'])], function(){message('greeting.php','greeting',0,0,0,[], function(){go_welcome(1);});});}
 function cont_remove(obj,fade){if(fade==1){$(obj).fadeOut();}else{$(obj).hide();}}
 function cont_tournament(id){message('tournament.php','content',0,0,1,[po(['tou_id','submit'],[id,'0'])], function(){message('menu.php','navigation',0,0,1,[po(['link'],['Tournament'])]);});}
@@ -40,6 +42,7 @@ function cont_delete(type, id){message('delete.php','',0,0,0,[po(['type', 'id'],
 //Submissions
 
 function submit_register(obj){message('register.php','registerform',0,0,1,[po(['submit'],['1']),obj]);}
+function submit_forgot(obj){message('forgot.php','forgotform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_login(obj){message('login.php','loginform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_create(obj){message('create.php','createform',0,0,1,[po(['submit'],['1']),obj]);}
 function submit_join(obj){message('join.php','joinform',0,0,1,[po(['submit'],['1']),obj]);}

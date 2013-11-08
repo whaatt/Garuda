@@ -17,6 +17,7 @@ switch($context){
 				<ul>
 					<li><a class="active"><span>Welcome</span></a></li>
 					<li><a onclick="go_register(); return false;"><span>Register</span></a></li>
+					<li><a onclick="go_forgot(); return false;"><span>Forgot</span></a></li>
 					<li><a onclick="go_login(); return false;"><span>Login</span></a></li>
 				</ul>
 				<? break;		
@@ -25,6 +26,16 @@ switch($context){
 				<ul>
 					<li><a onclick="go_welcome(); return false;"><span>Welcome</span></a></li>
 					<li><a class="active"><span>Register</span></a></li>
+					<li><a onclick="go_forgot(); return false;"><span>Forgot</span></a></li>
+					<li><a onclick="go_login(); return false;"><span>Login</span></a></li>
+				</ul>
+				<? break;
+			case 'Forgot':
+				?>
+				<ul>
+					<li><a onclick="go_welcome(); return false;"><span>Welcome</span></a></li>
+					<li><a onclick="go_register(); return false;"><span>Register</span></a></li>
+					<li><a class="active"><span>Forgot</span></a></li>
 					<li><a onclick="go_login(); return false;"><span>Login</span></a></li>
 				</ul>
 				<? break;
@@ -33,6 +44,7 @@ switch($context){
 				<ul>
 					<li><a onclick="go_welcome(); return false;"><span>Welcome</span></a></li>
 					<li><a onclick="go_register(); return false;"><span>Register</span></a></li>
+					<li><a onclick="go_forgot(); return false;"><span>Forgot</span></a></li>
 					<li><a class="active"><span>Login</span></a></li>
 				</ul>
 				<? break;
@@ -41,6 +53,7 @@ switch($context){
 				<ul>
 					<li><a class="active"><span>Welcome</span></a></li>
 					<li><a onclick="go_register(); return false;"><span>Register</span></a></li>
+					<li><a onclick="go_forgot(); return false;"><span>Forgot</span></a></li>
 					<li><a onclick="go_login(); return false;"><span>Login</span></a></li>
 				</ul>
 				<? break;

@@ -5,6 +5,8 @@ CREATE TABLE users (
 	name VARCHAR(100),
 	username VARCHAR(50) NOT NULL,
 	password CHAR(128) NOT NULL, /* Whirlpool Hash */
+	temp CHAR(128) NOT NULL, /* Whirlpool Hash */
+	email VARCHAR(512) NOT NULL, /* Forgot Your Password */
 	created TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 	updated TIMESTAMP DEFAULT NOW() ON UPDATE NOW() /* Initialize with NULL. */	
 );
