@@ -996,6 +996,10 @@ if(isset($_SESSION['username'])){
 					if ($selector == 'W:' or $selector == 'X:' or $selector == 'Y:' or $selector == 'Z:'){
 						$type = 'Multiple Choice';
 					}
+
+					else if ($selector == 'W.' or $selector == 'X.' or $selector == 'Y.' or $selector == 'Z.'){
+						$type = 'Multiple Choice';
+					}
 					
 					else{
 						$type = 'Short Answer';
@@ -1019,6 +1023,10 @@ if(isset($_SESSION['username'])){
 					$selector = substr(trim($entry['answer1']), 0, 2);
 					
 					if ($selector == 'W:' or $selector == 'X:' or $selector == 'Y:' or $selector == 'Z:'){
+						$type = 'Multiple Choice';
+					}
+					
+					else if ($selector == 'W.' or $selector == 'X.' or $selector == 'Y.' or $selector == 'Z.'){
 						$type = 'Multiple Choice';
 					}
 					
