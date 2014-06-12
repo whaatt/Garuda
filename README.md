@@ -1,6 +1,6 @@
 Garuda
 =============
-A Collaborative Quiz Bowl Packet Editor.
+A Collaborative Quiz Bowl Packet Editor
 
 - Uses HTML/CSS/JS for the front-end stuff.
 - Uses PHP for the back-end.
